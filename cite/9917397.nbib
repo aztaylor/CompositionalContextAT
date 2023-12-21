@@ -1,0 +1,68 @@
+PMID- 9917397
+OWN - NLM
+STAT- MEDLINE
+DCOM- 19990301
+LR  - 20071114
+IS  - 0022-2836 (Print)
+IS  - 0022-2836 (Linking)
+VI  - 285
+IP  - 4
+DP  - 1999 Jan 29
+TI  - Resolving the discrepancies among nucleic acid conformational analyses.
+PG  - 1563-75
+AB  - Growing interest in understanding the relationship between the global folding of 
+      nucleic acids and the sequence-dependent structure of individual base-pair steps 
+      has stimulated the development of new mathematical methods to define the geometry 
+      of the constituent base-pairs. Several approaches, designed to meet guidelines 
+      set by the nucleic acid community, permit rigorous comparative analyses of 
+      different three-dimensional structures, as well as allow for reconstruction of 
+      chain molecules at the base-pair level. The different computer programs, however, 
+      yield inconsistent descriptions of chain conformation. Here we report our own 
+      implementation of seven algorithms used to determine base-pair and dimer step 
+      parameters. Aside from reproducing the results of individual programs, we uncover 
+      the reasons why the different algorithms come to conflicting structural 
+      interpretations. The choice of mathematics has only a limited effect on the 
+      computed parameters, even in highly deformed duplexes. The results are much more 
+      sensitive to the choice of reference frame. The disparate schemes yield very 
+      similar conformational descriptions if the calculations are based on a common 
+      reference frame. The current positioning of reference frames at the inner and 
+      outer edges of complementary bases exaggerates the rise at distorted dimer steps, 
+      and points to the need for a carefully defined conformational standard.
+CI  - Copyright 1999 Academic Press.
+FAU - Lu, X J
+AU  - Lu XJ
+AD  - Department of Chemistry, Rutgers, the State University of New Jersey, 
+      Wright-Rieman Laboratories, 610 Taylor Road, Piscataway, NJ, 08854-8087, USA.
+FAU - Olson, W K
+AU  - Olson WK
+LA  - eng
+GR  - GM20861/GM/NIGMS NIH HHS/United States
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - Netherlands
+TA  - J Mol Biol
+JT  - Journal of molecular biology
+JID - 2985088R
+RN  - 63231-63-0 (RNA)
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Algorithms
+MH  - Base Pairing
+MH  - Base Sequence
+MH  - DNA/chemistry
+MH  - Models, Molecular
+MH  - *Nucleic Acid Conformation
+MH  - RNA/chemistry
+MH  - Software
+EDAT- 1999/01/26 00:00
+MHDA- 1999/01/26 00:01
+CRDT- 1999/01/26 00:00
+PHST- 1999/01/26 00:00 [pubmed]
+PHST- 1999/01/26 00:01 [medline]
+PHST- 1999/01/26 00:00 [entrez]
+AID - S0022-2836(98)92390-7 [pii]
+AID - 10.1006/jmbi.1998.2390 [doi]
+PST - ppublish
+SO  - J Mol Biol. 1999 Jan 29;285(4):1563-75. doi: 10.1006/jmbi.1998.2390.
