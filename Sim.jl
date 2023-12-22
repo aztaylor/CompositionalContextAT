@@ -32,8 +32,8 @@ end
   lₛ=150 # Length of MS
   
   lₜ=44 # Length of ptet
-  lₚ=2892 # Plasmid Length
-  kσₘₘ=50 # Michaelis-Menten constant for supercoiling hillfunctions
+
+  
   gyr₀=12 # Concentration Gyrase
   topo₀=2 # Conc. Topoisomerase
   kₗ₊=7e-2 # Rate forward transcription
@@ -70,7 +70,35 @@ D=Differential(t)
 
 @mtkmodel rates begin
     @parameters begin
-        lₗ = 40, [description="Length of plac [bp]"]
-          
+        lₗ = 40, [description="Length of plac" units=u"bp"]
+        lₚ=2892, [description="Length of plasmid" units=u"bp"]
+        σ₀= -0.065, [description="Length of plac" units=u"bp"]
+        kinitₘ = 7e-2, [description="Max initiation rate" units=u"nt/s"]
+        kelongₘ = 7e-2, [description="Max elomgation rate" units=u"nt/s"]
+        kσₘₘ= 50, [description="Michaelis-Menten constant for supercoiling hillfunctions", units=u"uM"]
+
+    @structural_paramaters begin
+        σspₗ = σ₀*lₚ/lₗ
+        σstₗ = σ₀*lₚ/lₛ
+        σspₘ = σ₀*lₚ/lₜ
+        σstₘ = σ₀*lₚ/lₘ
+
+    @variables
+        σpₗ(t)
+        σtₗ(t)
+        σpₘ(t)
+        σtₘ(t)
+
+    @functions
+        kinitₗ ~ σspₗ*kinitₘ/(1+(σpₗ(t)-σspₗ)^2)
+        kelongₗ ~ σstₗ*kelongₘ/(1+(σtₗ(t)-σstₗ)^2)
+        kinitₘ ~ σspₘ*kinitₘ/(1+(σpₘ(t)-σspₘ)^2)
+        kelongₘ ~ σstₘ*kelongₘ/(1+(σtₘ(t)-σstₘ)^2)
     end
+end
+
+@mtkmodel mGyrTopo begin
+    @paramaters begin
+        \delta
+    
 end
