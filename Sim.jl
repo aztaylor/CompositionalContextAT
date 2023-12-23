@@ -167,5 +167,64 @@ end" units=u"s^-1"]
         mpₗ ~ topo₀
     end
 
+<<<<<<< HEAD
            \alphak(t)= (gyr0/(gyr0+σpl))*(1-exp(- 
+=======
+  """  
+  IPTG tot = IPTG + aLacI
+  aTctot = aTc + aTetR
+  Using these laws, we can write a reduced order dynamical system model for the convergent biocircuit:
+  _mS = k cat;Sðst;SÞECS  dm mS;
+  _mG = k cat;Gðst;GÞECG  dm MG;
+  E _CS = kopen CCS  k cat ðst;SÞECS;
+  E _CG = kopen CCG  kcat ðst;GÞEC G;
+  _CC S = k f ðsp;SÞR tot  EC S  ECG  CC S  CC G
+  p tot
+  Lac  CC S  ECS  pLacC  ðk r + k openÞCCS
+  _CC G = k f ðsp;GÞR tot  EC S  ECG  CC S  CC G
+  p tot
+  Tet  CC G  ECG  pTetC  ðkr + kopenÞCC G
+  L _acI = rl + kua;L
+  IPTG tot  IPTG + k u;L
+  LacI tot  LacI  IPTGtot + IPTG
+  k aL LacI IPTG  k seq;LpLacLacI  dp LacI
+  T _etR = rt + k ua;T
+  aTc tot  aTc + k u;T
+  TetR tot  TetR  aTc tot + aTc
+  k aL Tet RaTc  kseq;TpTetTetR  dp TetR
+  I _PTG =  k a;LðLacI + pLacCÞIPTG + k ua;L
+  LacI tot  LacI  pLacC
+  a _Tc =  k a;T ðTetR + pTetCÞaTc + kua;T
+  TetR tot  TetR  pTetC
+  _st;S = 
+  
+  _mS  dm mS  _ECS
+   TL S
+  2h0nf;S
+  
+   _EC S  _CC S
+   PL S
+  2h0n f;S
+  + mðst;SÞ
+  _st;G = 
+   _ECG  _CC G
+   PL G
+  2h0nf;G
+  
+   _MG  dm MG  _EC G
+   TLG
+  2h0n f;G
+  + mðst;GÞ;
+  _sp;S = 
+   _ECS  _CC S
+   PL S
+  2h0nf;S
+  + mðsp;SÞ
+  _sp;G = 
+   _EC G  _CCG
+   PL G
+  2h0nf;G
+  + mðsp;GÞ       
+>>>>>>> 
+                   \alphak(t)= (gyr0/(gyr0+σpl))*(1-exp(- 
         
