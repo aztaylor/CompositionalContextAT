@@ -3,10 +3,6 @@ using IJulia, ModelingToolkit, DifferentialEquations, Plots, LinearAlgebra
 @variables begin
   t
   ribo(t) = 0 # conc of ribosomes
-  σtₛ(t)=-6 # supercoil state of mSpinach ORF
-  σtₘ(t)=-3 # supercoil state of MG ORF
-  σpₛ(t)=-6 # supercoil state of mSpinach promoter
-  σpₘ(t)=-3 # supercoil state of MG promoter
 end
 
 @parameters begin 
@@ -113,25 +109,26 @@ end
         kelongₘ ~ σstₘ*kelongₘ/(1+(σtₘ(t)-σstₘ)^2)
     end
 end
+
 @mktmodel reporterDynamics begin
     @components begin
         r = rates()
+        cLaws = conservationLaws()
     end
     @variables begin
-        ccₛ(t)=0 # lenggth of the closed mSpinach complex.
-        ecₛ(t)=0 # length of the mSpinach alongation complex.
-        reporterₛ(t)=0 # conc. of the mSplnach reporter
-        ccₘ(t)=0 # length of MG closed complex
-        ecₘ(t)=0 # length of MG elongation complex
-
+        reporterₛ(t)=0 
     end
 end
 
 @mtkmodel σDynamics begin
     @variables begin
-        
+    σtₛ(t)=-6 # supercoil state of mSpinach ORF
+    σtₘ(t)=-3 # supercoil state of MG ORF
+    σpₛ(t)=-6 # supercoil state of mSpinach promoter
+    σpₘ(t)=-3 # supercoil state of MG promoter   
     end
 end
+
 @mtkmodel mGyrTopo begin
     @paramaters begin
         gyr₀=12, [description="Concentration Gyrase" units=u"uM"]
