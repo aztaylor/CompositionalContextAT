@@ -103,3 +103,18 @@ end
         γ=0.5, ["Rate of Gyrase activity
 end" units=u"s^-1"]
         kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase" units=u"uM"]
+        σ₀=-0.065 [definition="standard supercoil state" units=u"bp"]
+    end
+        
+    @variables begin
+        σpₗ(t)
+        σtₗ(t)
+        σpₘ(t)
+        σtₘ(t)
+        m(t)
+    end
+        
+    @functions begin
+        m(t) ~ (gyr0+topo0)/2
+            
+        
