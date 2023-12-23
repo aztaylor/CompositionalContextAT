@@ -2,23 +2,7 @@ using IJulia, ModelingToolkit, DifferentialEquations, Plots, LinearAlgebra
              
 @variables begin
   t
-  repₗ(t)=0 # conc. of reppressor lacI
-  arepₗ(t)=0 # conc. of apolacI
-  indᵢ(t)=11 # conc. of inducer IPTG
-  promₗ(t)=0 # conc. of lac promoter
-  cpromₗ(t)=0 # conc. IPTG bound plac
-  ccₛ(t)=0 # lenggth of the closed mSpinach complex.
-  ecₛ(t)=0 # length of the mSpinach alongation complex.
-  reporterₛ(t)=0 # conc. of the mSplnach reporter
-  rnap(t)=18.931 # conc of RNAP
   ribo(t) = 0 # conc of ribosomes
-  repₜ(t)=0 # conc of TetR
-  indₐ(t)=11 # conc of aTc
-  arepₜ(t)=0 # conc of apoTetR
-  promₜ(t)=0 # conc ptet
-  cpromₜ(t)=0 # conc bound ptet
-  ccₘ(t)=0 # length of MG closed complex
-  ecₘ(t)=0 # length of MG elongation complex
   σtₛ(t)=-6 # supercoil state of mSpinach ORF
   σtₘ(t)=-3 # supercoil state of MG ORF
   σpₛ(t)=-6 # supercoil state of mSpinach promoter
@@ -63,8 +47,43 @@ end
   kuₜ=0.022 # tetR-DNA disassociation rate
   δₚ=0 # Average protein degredation rate
 end
-
+@variables t
 D=Differential(t)
+
+@connector conservationLaws begin
+    # These concervation laws only apply in vitro.
+    @variables begin
+        rnapᵗ,  [connect=Flow description="Total RNAP"]
+        pₗᵗ=0, [connect=Flow description="Total lac promoter"]
+        pₗᵗ=0, [connect=Flow description="Total Tet Promoter"]
+        repₗᵗ=0, [connect=Flow description="Total Lac Repressor"]
+        repₜᵗ=0, [connect=Flow description="Total Tet Repressor"]
+        indᵢᵗ=0, [connect=Flow description="Total IPTG"]
+        indₐᵗ=0, [connect=Flow description="Total aTc"]
+        ccₛ(t)=0, [description="Number of mSpinach elongation comlexes"]
+        ecₛ(t)=0,  [description="Number of mSpinach closed dna comlexes"]
+        ccₘ(t)=0, [description="Number of MG elongation comlexes"]
+        ecₘ(t)=0, [description="Number of MG closed dna comlexes"]
+        rnap(t)=0, [description="conc. RNAP" unit="nM"]
+        promₗ(t)=0 
+        cpromₗ(t)=0 
+        promₜ(t)=0 
+        cpromₜ(t)=0 
+        repₗ(t)=0 
+        arepₗ(t)=0 
+        repₜ(t)=0 
+        arepₜ(t)=0 
+        indᵢ(t)=0
+        indₐ(t)=0
+    end
+    @pequations begin
+        rnapₗᵗ = rnap+ecₛ+ecₘ+ccₛ+ccₘ
+        promₗᵗ = promₗᵗ+ccₛ+ecₛcpromₗ
+        promₜᵗ = promₜ+ccₘ+ecₘ+cpromₜ
+        indᵢᵗ = indᵢ+arepₗ+cpromₗ
+        indₐᵗ = indₐ+arepₜ+cpromₜ
+    end
+end
 
 @mtkmodel rates begin
     @parameters begin
@@ -74,36 +93,54 @@ D=Differential(t)
         kinitₘ = 7e-2, [description="Max initiation rate" units=u"nt/s"]
         kelongₘ = 7e-2, [description="Max elomgation rate" units=u"nt/s"]
         kσₘₘ= 50, [description="Michaelis-Menten constant for supercoiling hillfunctions", units=u"uM"]
-
-    @structural_paramaters begin
         σspₗ = σ₀*lₚ/lₗ
         σstₗ = σ₀*lₚ/lₛ
         σspₘ = σ₀*lₚ/lₜ
         σstₘ = σ₀*lₚ/lₘ
+    end
 
-    @variables
+    @variables begin
         σpₗ(t)
         σtₗ(t)
         σpₘ(t)
         σtₘ(t)
+    end
 
-    @functions
+    @functions begin
         kinitₗ ~ σspₗ*kinitₘ/(1+(σpₗ(t)-σspₗ)^2)
         kelongₗ ~ σstₗ*kelongₘ/(1+(σtₗ(t)-σstₗ)^2)
         kinitₘ ~ σspₘ*kinitₘ/(1+(σpₘ(t)-σspₘ)^2)
         kelongₘ ~ σstₘ*kelongₘ/(1+(σtₘ(t)-σstₘ)^2)
     end
 end
+@mktmodel reporterDynamics begin
+    @components begin
+        r = rates()
+    end
+    @variables begin
+        ccₛ(t)=0 # lenggth of the closed mSpinach complex.
+        ecₛ(t)=0 # length of the mSpinach alongation complex.
+        reporterₛ(t)=0 # conc. of the mSplnach reporter
+        ccₘ(t)=0 # length of MG closed complex
+        ecₘ(t)=0 # length of MG elongation complex
 
+    end
+end
+
+@mtkmodel σDynamics begin
+    @variables begin
+        
+    end
+end
 @mtkmodel mGyrTopo begin
     @paramaters begin
         gyr₀=12, [description="Concentration Gyrase" units=u"uM"]
-        topo₀=2 [description:"Conc. Topoisomerase" units=u"uM"]
+        topo₀=2, [description:"Conc. Topoisomerase" units=u"uM"]
         τ=0.5, [description="Rate of topoisomerase activity" units=u"s^-1"]
         γ=0.5, ["Rate of Gyrase activity
 end" units=u"s^-1"]
         kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase" units=u"uM"]
-        σ₀=-0.065 [definition="standard supercoil state" units=u"bp"]
+        σ₀=-0.065, [definition="standard supercoil state" units=u"bp"]
     end
         
     @variables begin
@@ -111,10 +148,14 @@ end" units=u"s^-1"]
         σtₗ(t)
         σpₘ(t)
         σtₘ(t)
-        m(t)
+        
     end
         
     @functions begin
-        m(t) ~ (gyr0+topo0)/2
+        if σpₗ > 0
+
+        mpₗ ~ topo₀
+    end
+
             
         

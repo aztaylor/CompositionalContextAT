@@ -1,11 +1,7 @@
 {
-	"folders": [
-		{
-			"path": "julia_project",
-						"language": "julia"
-		}
-	],
-		"settings": {
-				"editor.snippets.codeActions.enabled": false
-		}
+    "folders": [
+        {
+            "path": "."
+        }
+    ]
 }
