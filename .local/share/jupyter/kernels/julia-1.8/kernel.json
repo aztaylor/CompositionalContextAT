@@ -1,0 +1,14 @@
+{
+  "display_name": "Julia 1.8.3",
+  "argv": [
+    "/nix/store/4dkh426qldnal1n4m2czlhrmi4qf9ri5-julia-bin-1.8.3/bin/julia",
+    "-i",
+    "--color=yes",
+    "--project=@.",
+    "/home/runner/.julia/packages/IJulia/Vo51o/src/kernel.jl",
+    "{connection_file}"
+  ],
+  "language": "julia",
+  "env": {},
+  "interrupt_mode": "signal"
+}

@@ -124,10 +124,11 @@ end
         cLaws.ccₘ(t)=0
         cLaws.repₗ(t)=0
         cLaws.repₜ(t)=0
-        cLaws.indᵢ(t)=0
-        cLaws.indₐ(t)=0
+        cLaws.indᵢ(t)=1
+        cLaws.indₐ(t)=100
     end
     @parameters begin
+                D(reporter
         
     end
 end
@@ -166,5 +167,5 @@ end" units=u"s^-1"]
         mpₗ ~ topo₀
     end
 
-            
+           \alphak(t)= (gyr0/(gyr0+σpl))*(1-exp(- 
         
