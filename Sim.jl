@@ -60,18 +60,18 @@ D=Differential(t)
         ecₛ(t)=0,  [description="Number of mSpinach closed dna comlexes"]
         ccₘ(t)=0, [description="Number of MG elongation comlexes"]
         ecₘ(t)=0, [description="Number of MG closed dna comlexes"]
-        rnap(t)=0, [description="conc. RNAP" unit="nM"]
-        promₗ(t)=0 
-        cpromₗ(t)=0 
-        promₜ(t)=0 
-        cpromₜ(t)=0 
-        repₗ(t)=0 
-        arepₗ(t)=0 
-        repₜ(t)=0 
-        arepₜ(t)=0 
-        indᵢ(t)=0
-        indₐ(t)=0
-    end
+        rnap(t)=0, [description="conc. RNAP" unit=u"nM"]
+        promₗ(t)=0, [descriptio="conc. plac" unit=u"nM"]
+        cpromₗ(t)=0, [descriptio="conc. plac-lacI complex" unit=u"nM"]
+        promₜ(t)=0, [descriptio="conc. pTet" unit=u"nM"]
+        cpromₜ(t)=0, [descriptio="conc. pTet-TetR complex" unit=u"nM"]
+        repₗ(t)=0, [descriptio="conc. lacI Repressor" unit=u"nM"] 
+        arepₗ(t)=0, [descriptio="conc. apo LacI repressor" unit=u"nM"] 
+        repₜ(t)=0, [descriptio="conc. TetR Repressor" unit=u"nM"]
+        arepₜ(t)=0, [descriptio="conc. apo TetR" unit=u"nM"]
+        indᵢ(t)=0, [descriptio="conc. IPTG" unit=u"nM"]
+        indₐ(t)=0, [descriptio="conc. aTc" unit=u"ng/ul"]
+    end, 
     @pequations begin
         rnapₗᵗ = rnap+ecₛ+ecₘ+ccₛ+ccₘ
         promₗᵗ = promₗᵗ+ccₛ+ecₛcpromₗ
@@ -116,7 +116,19 @@ end
         cLaws = conservationLaws()
     end
     @variables begin
-        reporterₛ(t)=0 
+        reporterₛ(t)=0
+        reporterₘ(t)=0
+        cLaws.ecₛ(t)=0
+        cLaws.ecₘ(t)=0
+        cLaws.ccₛ(t)=0
+        cLaws.ccₘ(t)=0
+        cLaws.repₗ(t)=0
+        cLaws.repₜ(t)=0
+        cLaws.indᵢ(t)=0
+        cLaws.indₐ(t)=0
+    end
+    @parameters begin
+        
     end
 end
 
