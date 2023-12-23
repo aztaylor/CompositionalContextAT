@@ -34,8 +34,7 @@ end
   lₜ=44 # Length of ptet
 
   
-  gyr₀=12 # Concentration Gyrase
-  topo₀=2 # Conc. Topoisomerase
+  
   kₗ₊=7e-2 # Rate forward transcription
   kᵣ=550 # Reverse transcription rate
   kₜₓₚ=85 # Perbase transcription rate
@@ -51,10 +50,9 @@ end
   kbgl=1.25 # BCDbgl binding rate (relative)
   δₛ=log(2)/(30*60) # mSpinach degredation rate
   δₘ=log(2)/(60*60) # MG degredation rate
-  τ=0.5 # Rate of topoisomerase activity
-  γ=0.5 # Rate of Gyrase activity
+  
   σ₀=-0.065 # standard supercoil state
-  kgyrₘₘ=200 # Michaelis-Menten constant for gyrase
+  
   kaₗ=6e3 # Rate of DNA-free apolacI IPTG binding
   kuaₗ=1 # Rate of apolacI IPTG disassociation
   kbindₗ=10 # lacI-promoter asossiation rate
@@ -99,6 +97,9 @@ end
 
 @mtkmodel mGyrTopo begin
     @paramaters begin
-        \delta
-    
-end
+        gyr₀=12, [description="Concentration Gyrase" units=u"uM"]
+        topo₀=2 [description:"Conc. Topoisomerase" units=u"uM"]
+        τ=0.5, [description="Rate of topoisomerase activity" units=u"s^-1"]
+        γ=0.5, ["Rate of Gyrase activity
+end" units=u"s^-1"]
+        kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase" units=u"uM"]
