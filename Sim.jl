@@ -128,8 +128,8 @@ end
         cLaws.indₐ(t)=100
     end
     @parameters begin
-                D(reporter
-        
+        D(reporter)
+      
     end
 end
 
