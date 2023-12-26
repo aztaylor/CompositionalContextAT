@@ -1,4 +1,7 @@
-entrypoint = "main.jl"
+[language]
+language.julia
+
+entrypoint = "Sim.jl"
 
 [interpreter]
 command = ["julia", "-i", "--banner=no"]

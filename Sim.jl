@@ -7,7 +7,7 @@ end
 
 @parameters begin 
   h₀=10.5, [description="Count of nucleotides per turn of B-form DNA" unlts="bp"]
-  l\_i\_n=200, [description="Length of intergenic region" unlts="bp"]
+  l\_l    \_n=200, [description="Length of intergenic region" unlts="bp"]
   lₘ=68, [description="Length MG" unlts="bp"]
   lₛ=150 # Length of MS
   
@@ -128,7 +128,7 @@ end
         cLaws.indₐ(t)=100
     end
     @parameters begin
-        D(reporter)
+        
       
     end
 end
@@ -139,17 +139,18 @@ end
     σtₘ(t)=-3 # supercoil state of MG ORF
     σpₛ(t)=-6 # supercoil state of mSpinach promoter
     σpₘ(t)=-3 # supercoil state of MG promoter
-    @parameters
-        rate
-          kₜₓ=kₜₓₚ/105.5 # Average transcription rate
-          kₒₚₑₙ=0.04 # Rate of open complex formation
-          kₗₑₐₖ=0.02 # Rate of terminator escaping transcriptio
-          ρₗ=0 # Rate of lacI production
-          ρₜ=0 # Rate of tetR production
-          kₜₗ=21/(714+675) # RFP/CFP average translation rate
-          kᵪ=1/90 # CFP maturation rate
-          kᵣ=1/170 # RFP maturation rate
-          k₁₆=0.75 # BCD16 binding rate 
+    end
+    @parameters begin
+    rate
+    kₜₓ=kₜₓₚ/105.5,  # Average transcription rate
+    kₒₚₑₙ=0.04 # Rate of open complex formation
+    kₗₑₐₖ=0.02 # Rate of terminator escaping transcriptio
+    ρₗ=0 # Rate of lacI production
+    ρₜ=0 # Rate of tetR production
+    kₜₗ=21/(714+675) # RFP/CFP average translation rate
+    kᵪ=1/90 # CFP maturation rate
+    kᵣ=1/170 # RFP maturation rate
+    k₁₆=0.75 # BCD16 binding rate 
     end
 end
 
