@@ -1,5 +1,4 @@
-using IJulia, ModelingToolkit, DifferentialEquations, Plots, LinearAlgebra
-             
+using IJulia, ModelingToolkit, DifferentialEquations, Plots, Unitful
 @variables begin
   t
   ribo(t) = 0 # conc of ribosomes
@@ -46,123 +45,125 @@ end
 D=Differential(t)
 
 @connector conservationLaws begin
-    # These concervation laws only apply in vitro.
-    @variables begin
-        rnapᵗ,  [connect=Flow description="Total RNAP"]
-        pₗᵗ=0, [connect=Flow description="Total lac promoter"]
-        pₗᵗ=0, [connect=Flow description="Total Tet Promoter"]
-        repₗᵗ=0, [connect=Flow description="Total Lac Repressor"]
-        repₜᵗ=0, [connect=Flow description="Total Tet Repressor"]
-        indᵢᵗ=0, [connect=Flow description="Total IPTG"]
-        indₐᵗ=0, [connect=Flow description="Total aTc"]
-        ccₛ(t)=0, [description="Number of mSpinach elongation comlexes"]
-        ecₛ(t)=0,  [description="Number of mSpinach closed dna comlexes"]
-        ccₘ(t)=0, [description="Number of MG elongation comlexes"]
-        ecₘ(t)=0, [description="Number of MG closed dna comlexes"]
-        rnap(t)=0, [description="conc. RNAP" unit=u"nM"]
-        promₗ(t)=0, [descriptio="conc. plac" unit=u"nM"]
-        cpromₗ(t)=0, [descriptio="conc. plac-lacI complex" unit=u"nM"]
-        promₜ(t)=0, [descriptio="conc. pTet" unit=u"nM"]
-        cpromₜ(t)=0, [descriptio="conc. pTet-TetR complex" unit=u"nM"]
-        repₗ(t)=0, [descriptio="conc. lacI Repressor" unit=u"nM"] 
-        arepₗ(t)=0, [descriptio="conc. apo LacI repressor" unit=u"nM"] 
-        repₜ(t)=0, [descriptio="conc. TetR Repressor" unit=u"nM"]
-        arepₜ(t)=0, [descriptio="conc. apo TetR" unit=u"nM"]
-        indᵢ(t)=0, [descriptio="conc. IPTG" unit=u"nM"]
-        indₐ(t)=0, [descriptio="conc. aTc" unit=u"ng/ul"]
-    end, 
-    @pequations begin
-        rnapₗᵗ = rnap+ecₛ+ecₘ+ccₛ+ccₘ
-        promₗᵗ = promₗᵗ+ccₛ+ecₛcpromₗ
-        promₜᵗ = promₜ+ccₘ+ecₘ+cpromₜ
-        indᵢᵗ = indᵢ+arepₗ+cpromₗ
-        indₐᵗ = indₐ+arepₜ+cpromₜ
-    end
+
+  @variables begin
+      t
+      rnapᵗ(t) = 0.0, [connect=Flow, description="Total RNAP"]
+      pₗᵗ(t)=0.0, [connect=Flow, description="Total lac promoter"]
+      pₗᵗ(t)=0.0, [connect=Flow, description="T [otal Tet Promoter"]
+      repₗᵗ(t)=0.0, [connect=Flow, description="Total Lac Repressor"]
+      repₜᵗ(t)=0.0, [connect=Flow, description="Total Tet Repressor"]
+      indᵢᵗ(t)=0.0, [connect=Flow, description="Total IPTG"]
+      indₐᵗ(t)=0.0, [connect=Flow, description="Total aTc"]
+      ccₛ(t)=0, [description="Number of mSpinach elongation comlexes"]
+      ecₛ(t)=0, [description="Number of mSpinach closed dna comlexes"]
+      ccₘ(t)=0, [description="Number of MG elongation comlexes"]
+      ecₘ(t)=0, [description="Number of MG closed dna comlexes"]
+      rnap(t)=0, [description="conc RNAP", unit=u"nM"]
+      promₗ(t)=0, [description="conc plac", unit=u"nM"]
+      cprom(t)=0, [description="conc plac-lacI complex" ,unit=u"nM"]
+      promₜ(t)=0, [description="conc pTet", unit=u"nM"]
+      cpromₜ(t)=0, [description="conc pTet-TetR complex", unit=u"nM"]
+      repₗ(t)=0, [description="conc lacI Repressor", unit=u"nM"] 
+      arepₗ(t)=0, [description="conc apo LacI repressor", unit=u"nM"] 
+      repₜ(t)=0, [description="conc TetR Repressor", unit=u"nM"]
+      arepₜ(t)=0, [description="conc apo TetR", unit=u"nM"]
+      indᵢ(t)=0, [description="conc IPTG", unit=u"nM"]
+      indₐ(t)=0, [description="conc aTc", unit=u"ng/μl"]
+  end
+  @equations begin
+      rnapₗᵗ ~ rnap+ecₛ+ecₘ+ccₛ+ccₘ
+      promₗᵗ ~ promₗᵗ+ccₛ+ecₛcpromₗ
+      promₜᵗ ~ promₜ+ccₘ+ecₘ+cpromₜ
+      indᵢᵗ ~ indᵢ+arepₗ+cpromₗ
+      indₐᵗ ~ indₐ+arepₜ+cpromₜ
+  end
 end
 
 @mtkmodel rates begin
-    @parameters begin
-        lₗ = 40, [description="Length of plac" units=u"bp"]
-        lₚ=2892, [description="Length of plasmid" units=u"bp"]
-        σ₀= -0.065, [description="Length of plac" units=u"bp"]
-        kinitₘ = 7e-2, [description="Max initiation rate" units=u"nt/s"]
-        kelongₘ = 7e-2, [description="Max elomgation rate" units=u"nt/s"]
-        kσₘₘ= 50, [description="Michaelis-Menten constant for supercoiling hillfunctions", units=u"uM"]
-        σspₗ = σ₀*lₚ/lₗ
-        σstₗ = σ₀*lₚ/lₛ
-        σspₘ = σ₀*lₚ/lₜ
-        σstₘ = σ₀*lₚ/lₘ
-    end
+  @parameters begin
+      lₗ = 40, [description="Length of plac", unit=u"bp"]
+      lₚ=2892, [description="Length of plasmid", unit=u"bp"]
+      σ₀= -0.065, [description="Length of plac", unit=u"bp"]
+      kinitₘ = 7e-2, [description="Max initiation rate", unit=u"nt/s"]
+      kelongₘ = 7e-2, [description="Max elomgation rate", unit=u"nt/s"]
+      kσₘₘ= 50, [description="Michaelis-Menten constant for supercoiling hillfunctions", unit=u"uM"]
+      σspₗ = σ₀*lₚ/lₗ
+      σstₗ = σ₀*lₚ/lₛ
+      σspₘ = σ₀*lₚ/lₜ
+      σstₘ = σ₀*lₚ/lₘ
+  end
 
-    @variables begin
-        σpₗ(t)
-        σtₗ(t)
-        σpₘ(t)
-        σtₘ(t)
-    end
+  @variables begin
+      σpₗ(t)
+      σtₗ(t)
+      σpₘ(t)
+      σtₘ(t)
+  end
 
-    @functions begin
-        kinitₗ ~ σspₗ*kinitₘ/(1+(σpₗ(t)-σspₗ)^2)
-        kelongₗ ~ σstₗ*kelongₘ/(1+(σtₗ(t)-σstₗ)^2)
-        kinitₘ ~ σspₘ*kinitₘ/(1+(σpₘ(t)-σspₘ)^2)
-        kelongₘ ~ σstₘ*kelongₘ/(1+(σtₘ(t)-σstₘ)^2)
-    end
+  @functions begin
+      kinitₗ ~ σspₗ*kinitₘ/(1+(σpₗ(t)-σspₗ)^2)
+      kelongₗ ~ σstₗ*kelongₘ/(1+(σtₗ(t)-σstₗ)^2)
+      kinitₘ ~ σspₘ*kinitₘ/(1+(σpₘ(t)-σspₘ)^2)
+      kelongₘ ~ σstₘ*kelongₘ/(1+(σtₘ(t)-σstₘ)^2)
+  end
 end
 
 @mktmodel reporterDynamics begin
-    @components begin
-        r = rates()
-        cLaws = conservationLaws()
-    end
-    @variables begin
-        reporterₛ(t)=0
-        reporterₘ(t)=0
-        cLaws.ecₛ(t)=0
-        cLaws.ecₘ(t)=0
-        cLaws.ccₛ(t)=0
-        cLaws.ccₘ(t)=0
-        cLaws.repₗ(t)=0
-        cLaws.repₜ(t)=0
-        cLaws.indᵢ(t)=1
-        cLaws.indₐ(t)=100
-    end
-    @parameters begin
-        δₛ=log(2)/(30*60) # mSpinach degredation rate
-        δₘ=log(2)/(60*60) # MG degredation rate
-        kₒₚₑₙ=0.04 # Rate of open complex formation
-        
-    end
+  @components begin
+      r = rates()
+      cLaws = conservationLaws()
+  end
+  @variables begin
+      reporterₛ(t)=0
+      reporterₘ(t)=0
+      cLaws.ecₛ(t)=0
+      cLaws.ecₘ(t)=0
+      cLaws.ccₛ(t)=0
+      cLaws.ccₘ(t)=0
+      cLaws.repₗ(t)=0
+      cLaws.repₜ(t)=0
+      cLaws.indᵢ(t)=1
+      cLaws.indₐ(t)=100
+  end
+  @parameters begin
+      δₛ=log(2)/(30*60) # mSpinach degredation rate
+      δₘ=log(2)/(60*60) # MG degredation rate
+      kₒₚₑₙ=0.04 # Rate of open complex formation
+      r.kii
+      
+  end
 end
 
 @mtkmodel σDynamics begin
-    @variables begin
-    σtₛ(t)=-6 # supercoil state of mSpinach ORF
-    σtₘ(t)=-3 # supercoil state of MG ORF
-    σpₛ(t)=-6 # supercoil state of mSpinach promoter
-    σpₘ(t)=-3 # supercoil state of MG promoter   
-    end
+  @variables begin
+  σtₛ(t)=-6 # supercoil state of mSpinach ORF
+  σtₘ(t)=-3 # supercoil state of MG ORF
+  σpₛ(t)=-6 # supercoil state of mSpinach promoter
+  σpₘ(t)=-3 # supercoil state of MG promoter   
+  end
 end
 
 @mtkmodel mGyrTopo begin
-    @paramaters begin
-        gyr₀=12, [description="Concentration Gyrase" units=u"uM"]
-        topo₀=2, [description:"Conc. Topoisomerase" units=u"uM"]
-        τ=0.5, [description="Rate of topoisomerase activity" units=u"s^-1"]
-        γ=0.5, [description="Rate of Gyrase activit " units="1/s"]
-        kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase" units=u"uM"]
-        σ₀=-0.065, [definition="standard supercoil state" units=u"bp"]
-    end
-        
-    @variables begin
-        σpₗ(t)
-        σtₗ(t)
-        σpₘ(t)
-        σtₘ(t)
-        
-    end
-        
-    @functions begin
-        if σpₗ > 0
+  @paramaters begin
+      gyr₀=12, [description="Concentration Gyrase", unit=u"uM"]
+      topo₀=2, [description:"Conc. Topoisomerase", unit=u"uM"]
+      τ=0.5, [description="Rate of topoisomerase activity", unit=u"s^-1"]
+      γ=0.5, [description="Rate of Gyrase activit", unit=u"1/s"]
+      kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase", unit=u"uM"]
+      σ₀=-0.065, [definition="standard supercoil state", unit=u"bp"]
+  end
+      
+  @variables begin
+      σpₗ(t)
+      σtₗ(t)
+      σpₘ(t)
+      σtₘ(t)
+      
+  end
+      
+  @functions begin
+      if σpₗ > 0
 
-        mpₗ ~ topo₀
-    end
+      mpₗ ~ topo₀
+  end
