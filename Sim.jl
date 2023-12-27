@@ -6,18 +6,20 @@ using IJulia, ModelingToolkit, DifferentialEquations, Plots, LinearAlgebra
 end
 
 @parameters begin 
-  h₀=10.5, [description="Count of nucleotides per turn of B-form DNA" units="bp"]
-  l\_l\_n=200, [description="Length of intergenic region" units="bp"]
-  lₘ=68, [description="Length MG" units="bp"]
-  lₛ=150, [deacription="Length of MS" unlts="bp"]
+  h₀=10.5 # BP per right hand turn of B-DNA
+  lₛ=203 # Length of intergenic region
+  lₘ=68 # Length MS
+  lₛ=150 # Length of MS
   
-  lₜ=44, [description="Length of ptet" units="bp"]
-    
-  kₗ₊=7e-2, [description="Rate forward transcription" units="1/s"]
-  kᵣ=550, [description="Reverse transcription rate" units="1/s"]
-  kₜₓₚ=85.k, [description="Perbase transcription rate" units="s/bp"]
+  lₜ=44 # Length of ptet
+
+  
+  
+  kₗ₊=7e-2 # Rate forward transcription
+  kᵣ=550 # Reverse transcription rate
+  kₜₓₚ=85 # Perbase transcription rate
   kₜₓ=kₜₓₚ/105.5 # Average transcription rate
-  kₒₚₑₙ=0.04 # Rate of open complex formation
+  
   kₗₑₐₖ=0.02 # Rate of terminator escaping transcriptio
   ρₗ=0 # Rate of lacI production
   ρₜ=0 # Rate of tetR production
@@ -26,8 +28,7 @@ end
   kᵣ=1/170 # RFP maturation rate
   k₁₆=0.75 # BCD16 binding rate (relative)
   kbgl=1.25 # BCDbgl binding rate (relative)
-  δₛ=log(2)/(30*60) # mSpinach degredation rate
-  δₘ=log(2)/(60*60), :["MGdagra"]
+
   
   σ₀=-0.065 # standard supercoil state
   
@@ -39,7 +40,7 @@ end
   kuaₜ=1 # aTc-TetR disassociation rate
   kbindₜ=10 # tetR-DNA association rate
   kuₜ=0.022 # tetR-DNA disassociation rate
-  δₚ=0, [description="Average protein degredation rate"]
+  δₚ=0 # Average protein degredation rate
 end
 @variables t
 D=Differential(t)
@@ -126,8 +127,10 @@ end
         cLaws.indₐ(t)=100
     end
     @parameters begin
+        δₛ=log(2)/(30*60) # mSpinach degredation rate
+        δₘ=log(2)/(60*60) # MG degredation rate
+        kₒₚₑₙ=0.04 # Rate of open complex formation
         
-      
     end
 end
 
@@ -136,19 +139,7 @@ end
     σtₛ(t)=-6 # supercoil state of mSpinach ORF
     σtₘ(t)=-3 # supercoil state of MG ORF
     σpₛ(t)=-6 # supercoil state of mSpinach promoter
-    σpₘ(t)=-3 # supercoil state of MG promoter
-    end
-    @parameters begin
-    rate
-    kₜₓ=kₜₓₚ/105.5,  # Average transcription rate
-    kₒₚₑₙ=0.04 # Rate of open complex formation
-    kₗₑₐₖ=0.02 # Rate of terminator escaping transcriptio
-    ρₗ=0 # Rate of lacI production
-    ρₜ=0 # Rate of tetR production
-    kₜₗ=21/(714+675) # RFP/CFP average translation rate
-    kᵪ=1/90 # CFP maturation rate
-    kᵣ=1/170 # RFP maturation rate
-    k₁₆=0.75 # BCD16 binding rate 
+    σpₘ(t)=-3 # supercoil state of MG promoter   
     end
 end
 
@@ -157,8 +148,7 @@ end
         gyr₀=12, [description="Concentration Gyrase" units=u"uM"]
         topo₀=2, [description:"Conc. Topoisomerase" units=u"uM"]
         τ=0.5, [description="Rate of topoisomerase activity" units=u"s^-1"]
-        γ=0.5, ["Rate of Gyrase activity
-end" units=u"s^-1"]
+        γ=0.5, [description="Rate of Gyrase activit " units="1/s"]
         kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase" units=u"uM"]
         σ₀=-0.065, [definition="standard supercoil state" units=u"bp"]
     end
@@ -168,9 +158,11 @@ end" units=u"s^-1"]
         σtₗ(t)
         σpₘ(t)
         σtₘ(t)
+        
     end
         
     @functions begin
         if σpₗ > 0
-            \sigmapₗ ~ topo₀*(ee\s
+
+        mpₗ ~ topo₀
     end
