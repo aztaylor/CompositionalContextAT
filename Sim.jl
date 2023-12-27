@@ -1,4 +1,5 @@
 using IJulia, ModelingToolkit, DifferentialEquations, Plots, Unitful
+
 @variables begin
   t
   ribo(t) = 0 # conc of ribosomes
@@ -41,11 +42,11 @@ end
   kuₜ=0.022 # tetR-DNA disassociation rate
   δₚ=0 # Average protein degredation rate
 end
+
 @variables t
 D=Differential(t)
 
 @connector conservationLaws begin
-
   @variables begin
       t
       rnapᵗ(t) = 0.0, [connect=Flow, description="Total RNAP"]
@@ -82,12 +83,12 @@ end
 
 @mtkmodel rates begin
   @parameters begin
-      lₗ = 40, [description="Length of plac", unit=u"bp"]
-      lₚ=2892, [description="Length of plasmid", unit=u"bp"]
-      σ₀= -0.065, [description="Length of plac", unit=u"bp"]
-      kinitₘ = 7e-2, [description="Max initiation rate", unit=u"nt/s"]
-      kelongₘ = 7e-2, [description="Max elomgation rate", unit=u"nt/s"]
-      kσₘₘ= 50, [description="Michaelis-Menten constant for supercoiling hillfunctions", unit=u"uM"]
+      lₗ = 40, [description="Length of plac"] #, unit=ub"bp"]
+      lₚ=2892, [description="Length of plasmid"]#, unit=ub"bp"]
+      σ₀= -0.065, [description="Length of plac"]#, unit=ub"bp"]
+      kinitₘ = 7e-2, [description="Max initiation rate"]#, unit=u"nt/s"]
+      kelongₘ = 7e-2, [description="Max elomgation rate"]#, unit=u"nt/s"]
+      kσₘₘ= 50, [description="Michaelis-Menten constant for supercoiling hillfunctions", unit=u"μM"]
       σspₗ = σ₀*lₚ/lₗ
       σstₗ = σ₀*lₚ/lₛ
       σspₘ = σ₀*lₚ/lₜ
@@ -101,7 +102,7 @@ end
       σtₘ(t)
   end
 
-  @functions begin
+  @equations begin
       kinitₗ ~ σspₗ*kinitₘ/(1+(σpₗ(t)-σspₗ)^2)
       kelongₗ ~ σstₗ*kelongₘ/(1+(σtₗ(t)-σstₗ)^2)
       kinitₘ ~ σspₘ*kinitₘ/(1+(σpₘ(t)-σspₘ)^2)
@@ -109,28 +110,19 @@ end
   end
 end
 
-@mktmodel reporterDynamics begin
+@mtkmodel reporterDynamics begin
   @components begin
       r = rates()
-      cLaws = conservationLaws()
+      cLaws = conservationLaws(t)
   end
   @variables begin
       reporterₛ(t)=0
       reporterₘ(t)=0
-      cLaws.ecₛ(t)=0
-      cLaws.ecₘ(t)=0
-      cLaws.ccₛ(t)=0
-      cLaws.ccₘ(t)=0
-      cLaws.repₗ(t)=0
-      cLaws.repₜ(t)=0
-      cLaws.indᵢ(t)=1
-      cLaws.indₐ(t)=100
   end
   @parameters begin
       δₛ=log(2)/(30*60) # mSpinach degredation rate
       δₘ=log(2)/(60*60) # MG degredation rate
       kₒₚₑₙ=0.04 # Rate of open complex formation
-      r.kii
       
   end
 end
@@ -145,13 +137,13 @@ end
 end
 
 @mtkmodel mGyrTopo begin
-  @paramaters begin
-      gyr₀=12, [description="Concentration Gyrase", unit=u"uM"]
-      topo₀=2, [description:"Conc. Topoisomerase", unit=u"uM"]
+  @parameters begin
+      gyr₀=12, [description="Concentration Gyrase", unit=u"μM"]
+      topo₀=2, [description="Conc Topoisomerase", unit=u"μM"]
       τ=0.5, [description="Rate of topoisomerase activity", unit=u"s^-1"]
-      γ=0.5, [description="Rate of Gyrase activit", unit=u"1/s"]
-      kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase", unit=u"uM"]
-      σ₀=-0.065, [definition="standard supercoil state", unit=u"bp"]
+      γ=0.5, [description="Rate of Gyrase activit", unit=u"s^-1"]
+      kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase", unit=u"μM"]
+      σ₀=-0.065, [description="standard supercoil state"]#, unit=ub"bp"]
   end
       
   @variables begin
@@ -159,11 +151,11 @@ end
       σtₗ(t)
       σpₘ(t)
       σtₘ(t)
-      
   end
+end
       
-  @functions begin
-      if σpₗ > 0
+ # @equations begin
+ #     if σpₗ > 0
 
-      mpₗ ~ topo₀
-  end
+ #     mpₗ ~ topo₀
+#  end
