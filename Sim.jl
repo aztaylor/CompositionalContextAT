@@ -6,18 +6,16 @@ using IJulia, ModelingToolkit, DifferentialEquations, Plots, LinearAlgebra
 end
 
 @parameters begin 
-  h₀=10.5, [description="Count of nucleotides per turn of B-form DNA" unlts="bp"]
-  l\_l    \_n=200, [description="Length of intergenic region" unlts="bp"]
-  lₘ=68, [description="Length MG" unlts="bp"]
-  lₛ=150 # Length of MS
+  h₀=10.5, [description="Count of nucleotides per turn of B-form DNA" units="bp"]
+  l\_l\_n=200, [description="Length of intergenic region" units="bp"]
+  lₘ=68, [description="Length MG" units="bp"]
+  lₛ=150, [deacription="Length of MS" unlts="bp"]
   
-  lₜ=44 # Length of ptet
-
-  
-  
-  kₗ₊=7e-2 # Rate forward transcription
-  kᵣ=550 # Reverse transcription rate
-  kₜₓₚ=85 # Perbase transcription rate
+  lₜ=44, [description="Length of ptet" units="bp"]
+    
+  kₗ₊=7e-2, [description="Rate forward transcription" units="1/s"]
+  kᵣ=550, [description="Reverse transcription rate" units="1/s"]
+  kₜₓₚ=85.k, [description="Perbase transcription rate" units="s/bp"]
   kₜₓ=kₜₓₚ/105.5 # Average transcription rate
   kₒₚₑₙ=0.04 # Rate of open complex formation
   kₗₑₐₖ=0.02 # Rate of terminator escaping transcriptio
@@ -29,7 +27,7 @@ end
   k₁₆=0.75 # BCD16 binding rate (relative)
   kbgl=1.25 # BCDbgl binding rate (relative)
   δₛ=log(2)/(30*60) # mSpinach degredation rate
-  δₘ=log(2)/(60*60) # MG degredation rate
+  δₘ=log(2)/(60*60), :["MGdagra"]
   
   σ₀=-0.065 # standard supercoil state
   
