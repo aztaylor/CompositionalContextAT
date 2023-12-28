@@ -142,7 +142,7 @@ end
       τ=0.5, [description="Rate of topoisomerase activity", unit=u"s^-1"]
       γ=0.5, [description="Rate of Gyrase activit", unit=u"s^-1"]
       kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase", unit=u"μM"]
-      σ₀=-0.065, [description="standard supercoil state"]#, unit=ub"bp"]
+      σ₀=-0.065, [description="standard supercoil state"]#, unit=ub"bp"
   end
       
   @variables begin
@@ -150,6 +150,17 @@ end
       σtₗ(t)
       σpₘ(t)
       σtₘ(t)
+  end
+
+  @equations begin
+    if σpᵢ > 0
+      σpₗ₊ = σpᵢ+σpᵢ
+    else
+      
+    mpₛ~
+    mtₛ
+    mpₘ
+    mtₘ
   end
 end
 
@@ -177,6 +188,7 @@ end
   @equations begin
     D(σtₛ) ~ -(cLaws.reporterₛ-cLaws.δₛ*cLaws.reporterₛ-D(cLaws.ecₛ))*(lₛ)/(2*h₀nfₛ)...
             -(D(cLaws.ecₛ)-D(cLaws.ccₛ))*(lₗ/2*h₀*nfₛ)+m.mpₛ
+
   end
 
     
