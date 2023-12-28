@@ -1,11 +1,9 @@
 {
 	"folders": [
 		{
-			"path": "CompositionalContextAT"
+			"path": "CompositionalContextAT",
             "language": "julia"
 		}
 	],
-    "settings": {
-        "editor.snippets.codeActions.enabled": true"
-    }
+    "settings": {"editor.snippets.codeActions.enabled": true}
 }

@@ -5,17 +5,13 @@ using IJulia, ModelingToolkit, DifferentialEquations, Plots, Unitful
 end
 
 @parameters begin 
-  t
-  lᵢ=203 # Length of intergenic region
-  lₘ=68 # Length MG
-  lₛ=150 # Length of mSpinach
   
   kₗ₊=7e-2 # Rate forward transcription
   kᵣ=550 # Reverse transcription rate
   kₜₓₚ=85 # Perbase transcription rate
   kₜₓ=kₜₓₚ/105.5 # Average transcription rate
   
-  kₗₑₐₖ=0.02 # Rate of terminator escaping transcriptio
+  kₗₑₐₖ=0.02 # Rate of terminator escaping transcription.
 
   kₜₗ=21/(714+675) # RFP/CFP average translation rate
   kᵪ=1/90 # CFP maturation rate
@@ -160,7 +156,9 @@ end
 @mtkmodel σDynamics begin
   @components begin
     exdy = reporterDynamics()#, [description="Expression Dynamics"]
+    r = rates()
     cLaws=conservationLaws()
+    m = mGyrTopo()
   end
   @variables begin
     σtₛ(t)=-6, [description="supercoil state of mSpinach ORF"]
@@ -172,8 +170,15 @@ end
 
   @parameters begin
     h₀=10.5, [description="BP per right hand turn of B-DNA"]
-    nfₛ = lᵢ+lₛ
-    nfₘ = lᵢ+lₘ
+    lᵢ=203, [description="Length of intergenic region"]
+    nfₛ = lᵢ+r.lₛ
+    nfₘ = lᵢ+r.lₘ
+
+  @equations begin
+    D(σtₛ) ~ -(cLaws.reporterₛ-cLaws.δₛ*cLaws.reporterₛ-D(cLaws.ecₛ))*(lₛ)/(2*h₀nfₛ)...
+            -(D(cLaws.ecₛ)-D(cLaws.ccₛ))*(lₗ/2*h₀*nfₛ)+m.mpₛ
+  end
+
     
   end
 end
