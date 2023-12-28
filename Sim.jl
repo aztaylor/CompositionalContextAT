@@ -10,8 +10,6 @@ end
   lₘ=68 # Length MG
   lₛ=150 # Length of mSpinach
   
-  lₜ=44 # Length of ptet
-
   kₗ₊=7e-2 # Rate forward transcription
   kᵣ=550 # Reverse transcription rate
   kₜₓₚ=85 # Perbase transcription rate
@@ -75,7 +73,8 @@ end
   end
 
   @parameters begin
-      lₗ = 40, [description="Length of plac"] #, unit=ub"bp"]
+      lₗ=40, [description="Length of plac"] #, unit=ub"bp"]
+      lₜ=44, [description="Length of ptet"]
       lₚ=2892, [description="Length of plasmid"]#, unit=ub"bp"]
       σ₀= -0.065, [description="Length of plac"]#, unit=ub"bp"]
       kinitₘ = 7e-2, [description="Max initiation rate"]#, unit=u"nt/s"]
@@ -123,35 +122,20 @@ end
   end
 
   @equations begin
-    D(reporterₛ) ~ r.kinitₗ*cLaws.ecₛ - δₛ*reporterₛ
-    D(reporterₘ) ~ r.kinitₘ*cLaws.ecₘ - δₘ*reporterₘ
-    D(cLaws.ecₛ) ~ kₒₚₑₙ*cLaws.ccₛ - r.kinitₗ*cLaws.ecₛ
-    D(cLaws.ecₘ) ~ kₒₚₑₙ*cLaws.ccₘ - r.kinitₘ*cLaws.ecₘ
-    D(cLaws.ccₛ) ~ r.kelongₗ*(rnapᵗ-cLaws.ecₛ-cLaws.ecₘ-cLaws.ccₛ-cLaws.ccₘ)...
+    D(reporterₛ)~r.kinitₗ*cLaws.ecₛ-δₛ*reporterₛ
+    D(reporterₘ)~r.kinitₘ*cLaws.ecₘ-δₘ*reporterₘ
+    D(cLaws.ecₛ)~kₒₚₑₙ*cLaws.ccₛ-r.kinitₗ*cLaws.ecₛ
+    D(cLaws.ecₘ)~kₒₚₑₙ*cLaws.ccₘ-r.kinitₘ*cLaws.ecₘ
+    D(cLaws.ccₛ)~r.kelongₗ*(rnapᵗ-cLaws.ecₛ-cLaws.ecₘ-cLaws.ccₛ-cLaws.ccₘ)...
                   *(pₗᵗ-cLaws.ccₛ-cLaws.ecₛ-cpromₗ)-(r.kelongₗ-kₒₚₑₙ)*cLaws.ccₛ
-    D(cLaws.ccₘ) ~ r.kelongₘ*(rnapᵗ-cLaws.ecₘ-cLaws.ecₛ-cLaws.ccₛ-cLaws.ccₘ)...
+    D(cLaws.ccₘ)~r.kelongₘ*(rnapᵗ-cLaws.ecₘ-cLaws.ecₛ-cLaws.ccₛ-cLaws.ccₘ)...
                   *(pₘᵗ-cLaws.ccₘ-cLaws.ecₘ-cpromₜ)-(r.kelongₘ-kₒₚₑₙ)*cLaws.ccₘ
-    D(repₗ) ~ ρₗ+kuaₗ*(indᵢᵗ-indᵢ)+kuₗ(repₗᵗ-repₗ-indᵢᵗ-indᵢ)-kaₗ*repₗ*indᵢ-kbindₗ*repₗ-σₚ*repₗ
-    D(repₜ) ~ ρₜ+kuaₜ*(indₐᵗ-indₐ)*kuₜ(repₜᵗ-repₜ-indₐᵗ-indₐ)-kaₜ*repₜ*indₐ-kbindₜ*repₜ-σₚ*repₜ
-    D(indᵢ) ~ kaₗ*(repₗ+cpromₗ)*indᵢ+kuaₗ(repₗᵗ-repₗ-cpromₗ)
-    D(indₐ) ~ kaₜ*(repₜ+cpromₜ)*indₐ+kuaₜ(repₜᵗ-repₜ-cpromₜ)
-end
-
-@mtkmodel σDynamics begin
-  @components begin
-    exdy = reporterDynamics
-  end
-  @variables begin
-    σtₛ(t)=-6 # supercoil state of mSpinach ORF
-    σtₘ(t)=-3 # supercoil state of MG ORF
-    σpₛ(t)=-6 # supercoil state of mSpinach promoter
-    σpₘ(t)=-3 # supercoil state of MG promoter   
-  end
-
-  @parameters begin
-    h₀=10.5, [description="BP per right hand turn of B-DNA"]
-    nfₛ = l
-
+    D(cLaws.repₗ)~ρₗ+kuaₗ*(indᵢᵗ-indᵢ)+kuₗ(repₗᵗ-repₗ-indᵢᵗ-indᵢ)-kaₗ*repₗ*indᵢ...
+                  -kbindₗ*repₗ-σₚ*repₗ
+    D(cLaws.repₜ)~ρₜ+kuaₜ*(indₐᵗ-indₐ)*kuₜ(repₜᵗ-repₜ-indₐᵗ-indₐ)-kaₜ*repₜ*indₐ...
+                  -kbindₜ*repₜ-σₚ*repₜ
+    D(cLaws.indᵢ)~kaₗ*(repₗ+cpromₗ)*indᵢ+kuaₗ(repₗᵗ-repₗ-cpromₗ)
+    D(cLaws.indₐ)~kaₜ*(repₜ+cpromₜ)*indₐ+kuaₜ(repₜᵗ-repₜ-cpromₜ)
   end
 end
 
@@ -170,6 +154,27 @@ end
       σtₗ(t)
       σpₘ(t)
       σtₘ(t)
+  end
+end
+
+@mtkmodel σDynamics begin
+  @components begin
+    exdy = reporterDynamics()#, [description="Expression Dynamics"]
+    cLaws=conservationLaws()
+  end
+  @variables begin
+    σtₛ(t)=-6, [description="supercoil state of mSpinach ORF"]
+    σtₘ(t)=-3, [description="supercoil state of MG ORF"]
+    σpₛ(t)=-6, [description="supercoil state of mSpinach promoter"]
+    σpₘ(t)=-3, [description="supercoil state of MG promoter"]
+
+  end
+
+  @parameters begin
+    h₀=10.5, [description="BP per right hand turn of B-DNA"]
+    nfₛ = lᵢ+lₛ
+    nfₘ = lᵢ+lₘ
+    
   end
 end
       
