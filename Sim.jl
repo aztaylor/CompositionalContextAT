@@ -5,7 +5,6 @@ using IJulia, ModelingToolkit, DifferentialEquations, Plots, Unitful
 end
 
 @parameters begin 
-  
   kₗ₊=7e-2 # Rate forward transcription
   kᵣ=550 # Reverse transcription rate
   kₜₓₚ=85 # Perbase transcription rate
@@ -63,8 +62,8 @@ end
 @mtkmodel rates begin
   @variables begin
     σpₗ(t)
-    σtₗ(t)
-    σpₘ(t)
+    σtₛ(t)
+    σpₜ(t)
     σtₘ(t)
   end
 
@@ -84,8 +83,8 @@ end
 
   @equations begin
       kinitₗ ~ σspₗ*kinitₘ/(1+(σpₗ(t)-σspₗ)^2)
-      kelongₗ ~ σstₗ*kelongₘ/(1+(σtₗ(t)-σstₗ)^2)
-      kinitₘ ~ σspₘ*kinitₘ/(1+(σpₘ(t)-σspₘ)^2)
+      kelongₗ ~ σstₗ*kelongₘ/(1+(σtₛ(t)-σstₗ)^2)
+      kinitₘ ~ σspₘ*kinitₘ/(1+(σpₜ(t)-σspₘ)^2)
       kelongₘ ~ σstₘ*kelongₘ/(1+(σtₘ(t)-σstₘ)^2)
   end
 end
@@ -136,6 +135,8 @@ end
 end
 
 @mtkmodel mGyrTopo begin
+  @components begin
+    s = σdynamics()
   @parameters begin
       gyr₀=12, [description="Concentration Gyrase", unit=u"μM"]
       topo₀=2, [description="Conc Topoisomerase", unit=u"μM"]
@@ -146,18 +147,27 @@ end
   end
       
   @variables begin
-      σpₗ(t)
-      σtₗ(t)
-      σpₘ(t)
-      σtₘ(t)
+      σpₗ(t) = σ₀
+      σtₛ(t) = σ₀
+      σpₜ(t) = σₒ
+      σtₘ(t) = σ₀
   end
 
   @equations begin
-    if σpᵢ > 0
-      σpₗ₊ = σpᵢ+σpᵢ
-    else
+    σpₗ₊ = 0;σpₗ₋ = 0 
+    if σpₗ > 0; σpₗ₊ = σpₗ₊+σpₗ
+    elseif σpₗ < 0; σpₗ₋ = σpₗ₋+σpₗ; end
+    σtₗ₊ = 0;σtₗ₋ = 0 
+    if σtₛ > 0; σtₗ₊ = σtₗ₊+σtₛ
+    elseif σtₛ < 0; σtₗ₋ = σtₗ₋+σtₛ; end
+    σpₜ₊ = 0; σpₜ₋ = 0;
+    if σpₜ > 0; σpₜ₊ = σpₜ₊+σpₜ
+    elseif σpₜ < 0; σpₜ₋ = σpₜ₋+σpₜ; end
+    σtₘ₊ = 0; σtₘ₋ = 0;
+    if σtₘ > 0; σtₘ₊ = σtₘ₊+σtₘ
+    elseif σtₘ < 0; σtₘ₋ = σtₘ₋+σtₘ; end
       
-    mpₛ~
+    mpₛ~topo₀*τ*(σpₗ₋)/(σ₀+(σpₗ-σ₀)^2)*gyr₀*γ*(σpₗ₊)/(σ₀+(σpₗ-σ₀)^2)
     mtₛ
     mpₘ
     mtₘ
@@ -169,13 +179,13 @@ end
     exdy = reporterDynamics()#, [description="Expression Dynamics"]
     r = rates()
     cLaws=conservationLaws()
-    m = mGyrTopo()
+    m = mGyrTopo()c
   end
   @variables begin
     σtₛ(t)=-6, [description="supercoil state of mSpinach ORF"]
     σtₘ(t)=-3, [description="supercoil state of MG ORF"]
-    σpₛ(t)=-6, [description="supercoil state of mSpinach promoter"]
-    σpₘ(t)=-3, [description="supercoil state of MG promoter"]
+    σpₗ(t)=-6, [description="supercoil state of mSpinach promoter"]
+    σpₜ(t)=-3, [description="supercoil state of MG promoter"]
 
   end
 
@@ -186,7 +196,7 @@ end
     nfₘ = lᵢ+r.lₘ
 
   @equations begin
-    D(σtₛ) ~ -(cLaws.reporterₛ-cLaws.δₛ*cLaws.reporterₛ-D(cLaws.ecₛ))*(lₛ)/(2*h₀nfₛ)...
+    D(σtₛ) ~ -(cLaws.reporterₛ-cLaws.δₛ*cLaws.reporterₛ-D(cLaws.ecₛ))*(lₛ)/(2*h₀*nfₛ)...
             -(D(cLaws.ecₛ)-D(cLaws.ccₛ))*(lₗ/2*h₀*nfₛ)+m.mpₛ
 
   end
