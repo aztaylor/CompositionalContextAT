@@ -1,6 +1,7 @@
 using IJulia, ModelingToolkit, DifferentialEquations, Plots, Unitful
 
 @variables begin
+  t
   ribo(t) = 0 # conc of ribosomes
 end
 
@@ -11,14 +12,6 @@ end
   kₜₓ=kₜₓₚ/105.5 # Average transcription rate
   
   kₗₑₐₖ=0.02 # Rate of terminator escaping transcription.
-
-  kₜₗ=21/(714+675) # RFP/CFP average translation rate
-  kᵪ=1/90 # CFP maturation rate
-
-  k₁₆=0.75 # BCD16 binding rate (relative)
-  kbgl=1.25 # BCDbgl binding rate (relative)
-
-  σ₀=-0.065 # standard supercoil state
 end
 
 @variables t
@@ -137,6 +130,7 @@ end
 @mtkmodel mGyrTopo begin
   @components begin
     s = σdynamics()
+  end
   @parameters begin
       gyr₀=12, [description="Concentration Gyrase", unit=u"μM"]
       topo₀=2, [description="Conc Topoisomerase", unit=u"μM"]
@@ -167,10 +161,10 @@ end
     if σtₘ > 0; σtₘ₊ = σtₘ₊+σtₘ
     elseif σtₘ < 0; σtₘ₋ = σtₘ₋+σtₘ; end
       
-    mpₛ~topo₀*τ*(σpₗ₋)/(σ₀+(σpₗ-σ₀)^2)*gyr₀*γ*(σpₗ₊)/(σ₀+(σpₗ-σ₀)^2)
-    mtₛ
-    mpₘ
-    mtₘ
+    mpₗ~topo₀*τ*(σpₗ₋)/(σ₀+(σpₗ-σ₀)^2)*gyr₀*γ*(σpₗ₊)/(σ₀+(σpₗ-σ₀)^2)
+    mtₛ~topo₀*τ*(σtₛ₋)/(σ₀+(σtₛ-σ₀)^2)*gyr₀*γ*(σtₛ₊)/(σ₀+(σtₛ-σ₀)^2)
+    mpₜ~topo₀*τ*(σpₜ₋)/(σ₀+(σpₜ-σ₀)^2)*gyr₀*γ*(σpₜ₊)/(σ₀+(σpₜ-σ₀)^2)
+    mtₘ~topo₀*τ*(σtₘ₋)/(σ₀+(σtₘ-σ₀)^2)*gyr₀*γ*(σtₘ₊)/(σ₀+(σtₘ-σ₀)^2)
   end
 end
 
@@ -179,34 +173,45 @@ end
     exdy = reporterDynamics()#, [description="Expression Dynamics"]
     r = rates()
     cLaws=conservationLaws()
-    m = mGyrTopo()c
+    m = mGyrTopo()
   end
   @variables begin
     σtₛ(t)=-6, [description="supercoil state of mSpinach ORF"]
     σtₘ(t)=-3, [description="supercoil state of MG ORF"]
     σpₗ(t)=-6, [description="supercoil state of mSpinach promoter"]
     σpₜ(t)=-3, [description="supercoil state of MG promoter"]
-
   end
+
+  @mtkmodel lengthforsupercoiling abs begin
+    @parameters begin
+      lᵢ=203, [description="Lessngth of intergenic region"]
+      lₛ = 240
+      lₘ = 63
+      lₗ=40, [description="Length of plac"] #, unit=ub"bp"]
+      lₜ=44, [description="Length of ptet"] 
+    end
+    @equations begin
+      LHS = lₗ+tₛ+lᵢ/2(ρₜ)/(rhoₜ+cpromₜ)+(lᵢ/2+lₘ)*cpromₜ/(ρₜ+cpromₜ)-dkink
+    
+    end
+  end
+
 
   @parameters begin
     h₀=10.5, [description="BP per right hand turn of B-DNA"]
-    lᵢ=203, [description="Length of intergenic region"]
-    nfₛ = lᵢ+r.lₛ
-    nfₘ = lᵢ+r.lₘ
+    lᵢ=203, [description="Lessngth of intergenic region"]
+    lₛ = 240
+    lₘ = 63
+    nfₛ = lᵢ+lₛ
+    nfₘ = lᵢ+lₘ
+  end
 
   @equations begin
     D(σtₛ) ~ -(cLaws.reporterₛ-cLaws.δₛ*cLaws.reporterₛ-D(cLaws.ecₛ))*(lₛ)/(2*h₀*nfₛ)...
             -(D(cLaws.ecₛ)-D(cLaws.ccₛ))*(lₗ/2*h₀*nfₛ)+m.mpₛ
-
-  end
-
-    
+    D(σpₗ) ~ -(D(cLaws.ecₛ)-D(cLaws.ccₛ))*(lₗ/2*h₀*nfₛ)+m.mpₛ
+    D(σpₜ) ~ (cLaws.reporterₘ-cLaws.δₛ*cLaws.reporterₘ-D(cLaws.ecₘ))*(lₘ)/(2*h₀*nfₘ)...
+            -(D(cLaws.ecₘ)-D(cLaws.ccₘ))*(lₗ/2*h₀*nfₘ)+m.mpₘ
+    D(σtₘ) ~ -(D(cLaws.ecₘ)-D(cLaws.ccₘ))*(lₗ/2*h₀*nₘ)+m.mpₘ
   end
 end
-      
- # @equations begin
- #     if σpₗ > 0
-
- #     mpₗ ~ topo₀
-#  end
