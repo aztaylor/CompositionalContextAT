@@ -1,17 +1,9 @@
-__precompile__(true)
 module UnitfulBio
 
-import Unitful
-using Unitful: @unit 
-export @ub_str
+using Unitful
 
-@unit bp_ub "bp" basePairs 1e-12*Unitful.m false 
+@unit bp "bp" basePairs 340e-15*u"m" false 
+@unit nt "nt" nucleotides 340e-15*u"m" false
 
-include("bioMacro.jl")
-
-const localUnits = copy(Unitful.basefactors)
-function __init__()
-  merge!(Unitful.basefactors, localUnits)
-  Unitful.register(UnitfulBio)
-end
+Unitful.register(UnitfulBio)
 end

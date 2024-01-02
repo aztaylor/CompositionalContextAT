@@ -87,8 +87,8 @@ end
 @mtkmodel reporterDynamics begin
   @extend dnaComplexDynamics()
   @variables begin
-    reporterₛ(t)=0, [description="mSpinach Transcript", unit="μ/s"]
-    reporterₘ(t)=0, [description="MG Transcript", unit="μ/s"]
+    reporterₛ(t)=0, [description="mSpinach Transcript", unit="μM"]
+    reporterₘ(t)=0, [description="MG Transcript", unit="μM"]
   end
   @equations begin
     D(reporterₛ)~kinitₗ*ecₛ-δₛ*reporterₛ
@@ -107,9 +107,9 @@ end
 @mtkmodel nᵢ begin
   @extend reporterDynamics()
   @parameters begin
-    lᵢ=203, [description="Lessngth of intergenic region"]
-    lₛ=240, [description="Length of mSpinach and T500 terminator"]
-    lₘ=63,  [description="Length of MG and T500 terminator"]
+    lᵢ=203, [description="Lessngth of intergenic region" unit=u"bp"]
+    lₛ=240, [description="Length of mSpinach and T500 terminator", unit=u"bp"]
+    lₘ=63,  [description="Length of MG and T500 terminator", unit=u"bp"]
     lₗ=40, [description="Length of plac", unit=u"bp"]
     lₜ=44, [description="Length of ptet", unit=u"bp"] 
     Δₖᵢₙₖ = (σtₛ+σtₘ)*h₀, [description="Position of the kink serperating coils from either side", unit=u"bp"] 
