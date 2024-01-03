@@ -10,15 +10,11 @@ D = Differential(t)
     lₛ=240, [description="Length of mSpinach and T500 terminator", unit=u"bp"]
     lₘ=63,  [description="Length of MG and T500 terminator", unit=u"bp"]
     lₚ=2892, [description="Length of plasmid", unit=u"bp"]
-    σ₀= -0.065, [description="Natural B-form DNA supercoil state", unit=u"2π*rad*bp^-1"]
     kinitₗ = 7e-2, [description="Max transcription rate of plac", unit=u"nt*s^-1"]
     kinitₘ = 7e-2, [description="Max initiation rate", unit=u"nt*s^-1"]
     kelongₘ = 7e-2, [description="Max elongation rate", unit=u"nt*s^-1"]
     kelongₗ = 7e-2, [description="Max elongation rate", unit=u"nt*s^-1"]
     kσₘₘ= 50, [description="MM constant for supercoiling hillfunctions",unit=u"μM"]
-    δₛ=log(2)/(30*60), [description = "mSpinach degredation rate", unit= u"s^-1"]
-    δₘ=log(2)/(60*60), [description = "MG degredation rate", unit= u"s^-1"]
-    δₚ=0,[description="Average protein degredation rate", unit= u"s^-1"]
     kₒₚₑₙ=0.04, [description = "Rate of open complex formation", unit= u"2*π*rad*s^-1"]
     kᵣ=1/170, [description = "RFP maturation rate", unit= u"s^-1"]
     kaₗ=6e3, [description="Rate of DNA-free apolacI IPTG binding", unit= u"s^-1"]
@@ -30,23 +26,28 @@ D = Differential(t)
     kbindₜ=10, [description="tetR-DNA association rate", unit= u"s^-1"]
     kuₜ=0.022, [description = "tetR-DNA disassociation rate", unit= u"s^-1"]
     ρₗ=0, [description="Rate of lacI production", unit= u"s^-1"]
-    ρₜ=0, [description="Rate of tetR production", unit= u"s^-1"] 
-    σspₗ = σ₀*lₚ/lₗ, [description="Approximate Optimal supercoiling density, plac", unit="turn*bp^-1"]
-    σstₗ = σ₀*lₚ/lₛ, [description="Approximate Optimal supercoiling density, plac", unit="turn*bp^-1"]
-    σspₘ = σ₀*lₚ/lₜ, [description="Approximate Optimal supercoiling density, pTet", unit="turn*bp^-1"]
-    σstₘ = σ₀*lₚ/lₘ, [description="Approximate Optimal supercoiling density, pTet", unit="turn*bp^-1"]
+    ρₜ=0, [description="Rate of tetR production", unit= u"s^-1"]
+    δₛ=log(2)/(30*60), [description = "mSpinach degredation rate", unit= u"s^-1"]
+    δₘ=log(2)/(60*60), [description = "MG degredation rate", unit= u"s^-1"]
+    δₚ=0,[description="Average protein degredation rate", unit= u"s^-1"]
+    σ₀= -0.065, [description="Natural B-form DNA supercoil state", unit=u"2π*rad*bp^-1"] 
+    σspₗ = σ₀*lₚ/lₗ, [description="Approximate Optimal supercoiling density, plac", unit=u"turn*bp^-1"]
+    σstₗ = σ₀*lₚ/lₛ, [description="Approximate Optimal supercoiling density, plac", unit=u"turn*bp^-1"]
+    σspₘ = σ₀*lₚ/lₜ, [description="Approximate Optimal supercoiling density, pTet", unit=u"turn*bp^-1"]
+    σstₘ = σ₀*lₚ/lₘ, [description="Approximate Optimal supercoiling density, pTet", unit=u"turn*bp^-1"]
+
   end
   @variables begin
-    σtₛ(t)=-6, [description="supercoil state of mSpinach ORF", unit="turn*bp^-1"]
-    σtₘ(t)=-3, [description="supercoil state of MG ORF", unit="turn*bp^-1"]
-    σpₗ(t)=-6, [description="supercoil state of mSpinach promoter", unit="turn*bp^-1"]
-    σpₜ(t)=-3, [description="supercoil state of MG promoter", unit="turn*bp^-1"]
+    σtₛ(t)=-6, [description="supercoil state of mSpinach ORF", unit=u"turn*bp^-1"]
+    σtₘ(t)=-3, [description="supercoil state of MG ORF", unit=u"turn*bp^-1"]
+    σpₗ(t)=-6, [description="supercoil state of mSpinach promoter", unit=u"turn*bp^-1"]
+    σpₜ(t)=-3, [description="supercoil state of MG promoter", unit=u"turn*bp^-1"]
   end
   @equations begin
-    kinitₗ ~ σspₗ*kinitₘ/(1+(σpₗ-σspₗ)^2)
-    kelongₗ ~ σstₗ*kelongₘ/(1+(σtₛ-σstₗ)^2)
-    kinitₘ ~ σspₘ*kinitₘ/(1+(σpₜ-σspₘ)^2)
-    kelongₘ ~ σstₘ*kelongₘ/(1+(σtₘ-σstₘ)^2)
+    kinitₗ ~ σspₗ/(1+((σpₗ-σspₗ)^2)/kinitₘ)
+    kelongₗ ~ σstₗ/(1+((σtₛ-σstₗ)^2)/kelongₘ)
+    kinitₘ ~ σspₘ/(1+((σpₜ-σspₘ)^2)/kinitₘ)
+    kelongₘ ~ σstₘ/(1+((σtₘ-σstₘ)^2)/kelongₘ)
   end
 end
 
@@ -62,10 +63,10 @@ end
     indₐᵗ=0.0, [description="Total aTc, not metabolized by the reaction volume", connect = Flow]
   end
   @variables begin
-    ecₛ(t)=0, [description="Number of mSpinach elongation comlexes", unit="bp"]
-    ecₘ(t)=0, [description="Number of mSpinach closed dna comlexes", unit="bp"]
-    ccₛ(t)=0, [description="Number of MG elongation comlexes", unit="bp"]
-    ccₘ(t)=0, [description="Number of MG closed dna comlexes", unit="bp"]
+    ecₛ(t)=0, [description="Number of mSpinach elongation comlexes", unit=u"bp"]
+    ecₘ(t)=0, [description="Number of mSpinach closed dna comlexes", unit=u"bp"]
+    ccₛ(t)=0, [description="Number of MG elongation comlexes", unit=u"bp"]
+    ccₘ(t)=0, [description="Number of MG closed dna comlexes", unit=u"bp"]
     cpromₗ(t)=0, [description="conc plac-lacI complex" ,unit=u"nM"]
     cpromₜ(t)=0, [description="conc pTet-TetR complex", unit=u"nM"]
     reprₗ(t)=0, [description="conc LacI Repressor", unit=u"nM"]
@@ -87,8 +88,8 @@ end
 @mtkmodel reporterDynamics begin
   @extend dnaComplexDynamics()
   @variables begin
-    reporterₛ(t)=0, [description="mSpinach Transcript", unit="μM"]
-    reporterₘ(t)=0, [description="MG Transcript", unit="μM"]
+    reporterₛ(t)=0, [description="mSpinach Transcript", unit=u"μM"]
+    reporterₘ(t)=0, [description="MG Transcript", unit=u"μM"]
   end
   @equations begin
     D(reporterₛ)~kinitₗ*ecₛ-δₛ*reporterₛ
@@ -107,7 +108,7 @@ end
 @mtkmodel nᵢ begin
   @extend reporterDynamics()
   @parameters begin
-    h₀= 10.5, [description="basepairs per right-hand turn", unit="bp rad^-1 2π^-1"]
+    h₀= 10.5, [description="basepairs per right-hand turn", unit=u"bp*rad^-1*2π^-1"]
     Δₖᵢₙₖ = (σtₛ+σtₘ)*h₀, [description="Position of the kink serperating coils from either side", unit=u"bp"] 
   end
   @equations begin
@@ -121,14 +122,20 @@ end
   @parameters begin
     gyr₀=18.93, [description="Concentration Gyrase", unit=u"μM"]
     topo₀=2, [description="Conc Topoisomerase", unit=u"μM"]
-    τ=0.5, [description="Rate of topoisomerase activity", unit=u"s^-1"]
-    γ=0.5, [description="Rate of Gyrase activit", unit=u"s^-1"]
+    τ=0.5, [description="Rate of topoisomerase activity", unit=u"turn*s^-1"]
+    γ=0.5, [description="Rate of Gyrase activit", unit=u"turn*s^-1"]
     kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase", unit=u"μM"]
-    σ₀=-0.065, [description="standard supercoil state" unit=u"turn*bp^-1"]
+    σ₀=-0.065, [description="standard supercoil state", unit=u"turn*bp^-1"]
   end 
   @parameters begin
-    σpₗ₊ = 0
-    σpₗ₋ = 0
+    σpₗ₊ = 0, [description="Decomposition of the plac supercoiling state into strictly positive parts", unit=u"turn*bp^-1"] 
+    σpₗ₋ = 0, [description="Decomposition of the plac supercoiling state into strictly negative parts", unit=u"turn*bp^-1"]
+    σtₛ₊ = 0, [description="Decomposition of the mSpinach supercoiling state into strictly positive parts", unit=u"turn*bp^-1"]
+    σtₛ₋ = 0, [description="Decomposition of the mSpinach supercoiling state into strictly negative parts", unit=u"turn*bp^-1"]
+    σpₜ₊ = 0, [description="Decomposition of the pTet supercoiling state into strictly positive parts", unit=u"turn*bp^-1"]
+    σpₜ₋ = 0, [description="Decomposition of the pTet supercoiling state into strictly negative parts", unit=u"turn*bp^-1"]
+    σtₘ₊ = 0, [description="Decomposition of the MG supercoiling state into strictly positive parts", unit=u"turn*bp^-1"]
+    σtₘ₋ = 0, [description="Decomposition of the MG supercoiling state into strictly negative parts", unit=u"turn*bp^-1"]
   end  
   @equations begin
     if σpₗ > 0
@@ -136,31 +143,25 @@ end
     elseif σpₗ < 0 
       σpₗ₋ = σpₗ₋+σpₗ
     end
-    σtₗ₊ = 0
-    σtₗ₋ = 0 
     if σtₛ > 0
-       σtₗ₊ = σtₗ₊+σtₛ
+       σtₛ₊ = σtₛ₊+σtₛ
     elseif σtₛ < 0
-      σtₗ₋ = σtₗ₋+σtₛ; end
-    σpₜ₊ = 0
-    σpₜ₋ = 0
+      σtₛ₋ = σtₛ₋+σtₛ; end
     if σpₜ > 0
        σpₜ₊ = σpₜ₊+σpₜ
     elseif σpₜ < 0
        σpₜ₋ = σpₜ₋+σpₜ
     end
-    σtₘ₊ = 0
-    σtₘ₋ = 0
     if σtₘ > 0
        σtₘ₊ = σtₘ₊+σtₘ
     elseif σtₘ < 0
        σtₘ₋ = σtₘ₋+σtₘ
     end
       
-    mpₗ~topo₀*τ*(σpₗ₋)/(σ₀+(σpₗ-σ₀)^2)*gyr₀*γ*(σpₗ₊)/(σ₀+(σpₗ-σ₀)^2)
-    mtₛ~topo₀*τ*(σtₛ₋)/(σ₀+(σtₛ-σ₀)^2)*gyr₀*γ*(σtₛ₊)/(σ₀+(σtₛ-σ₀)^2)
-    mpₜ~topo₀*τ*(σpₜ₋)/(σ₀+(σpₜ-σ₀)^2)*gyr₀*γ*(σpₜ₊)/(σ₀+(σpₜ-σ₀)^2)
-    mtₘ~topo₀*τ*(σtₘ₋)/(σ₀+(σtₘ-σ₀)^2)*gyr₀*γ*(σtₘ₊)/(σ₀+(σtₘ-σ₀)^2)
+    mpₗ~topo₀*τ*(σpₗ₋)/kσₘₘ/(σ₀+(σpₗ-σ₀)^2)\kσₘₘ*gyr₀*γ*(σpₗ₊)/kσₘₘ/(σ₀+(σpₗ-σ₀)^2)/kσₘₘ
+    mtₛ~topo₀*τ*(σtₛ₋)/kσₘₘ/(σ₀+(σtₛ-σ₀)^2)/kσₘₘ*gyr₀*γ*(σtₛ₊)/kσₘₘ/(σ₀+(σtₛ-σ₀)^2)/kσₘₘ
+    mpₜ~topo₀*τ*(σpₜ₋)/kσₘₘ/(σ₀+(σpₜ-σ₀)^2)*gyr₀*γ*(σpₜ₊)/kσₘₘ/(σ₀+(σpₜ-σ₀)^2)/kσₘₘ
+    mtₘ~topo₀*τ*(σtₘ₋)/kσₘₘ/(σ₀+(σtₘ-σ₀)^2)*gyr₀*γ*(σtₘ₊)/kσₘₘ/(σ₀+(σtₘ-σ₀)^2)/kσₘₘ
   end
 end
 
@@ -175,14 +176,6 @@ end
     D(σtₘ) ~ -(D(ecₘ)-D(ccₘ))*(lₗ/2*h₀*nₘ)+mpₜ
   end
 end
-@parameters begin 
-  kₗ₊=7e-2 # Rate forward transcription
-  kᵣ=550 # Reverse transcription rate
-  kₜₓₚ=85 # Perbase transcription rate
-  kₜₓ=kₜₓₚ/105.5 # Average transcription rate
-  kₗₑₐₖ=0.02 # Rate of terminator escaping transcription.
-end
-
 
 sys = σDynamics
 @mtkbuild model = sys()
