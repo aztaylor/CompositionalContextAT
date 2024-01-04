@@ -1,9 +1,0 @@
-{
-	"folders": [
-		{
-			"path": "CompositionalContextAT",
-            "language": "julia"
-		}
-	],
-    "settings": {"editor.snippets.codeActions.enabled": true}
-}
