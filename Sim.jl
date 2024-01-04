@@ -1,4 +1,4 @@
-using IJulia, ModelingToolkit, DifferentialEquations, Plots, Unitful
+using IJulia, ModelingToolkit, DifferentialEquations, Plots, Unitful, UnitfulAngles
 
 @parameters t
 D = Differential(t)
@@ -13,7 +13,7 @@ D = Differential(t)
     kinitₘₐₓ = 7e-2, [description="Max initiation rate", unit=u"s^-1"]
     kelongₘₐₓ = 7e-2, [description="Max elongation rate", unit=u"s^-1"]
     kσₘₘ= 50, [description="MM constant for supercoiling hillfunctions",unit=u"μM"]
-    kₒₚₑₙ=0.04, [description = "Rate of open complex formation", unit= u"2*π*rad*s^-1"]
+    kₒₚₑₙ=0.04, [description = "Rate of open complex formation", unit= u"turn*s^-1"]
     kᵣ=1/170, [description = "RFP maturation rate", unit= u"s^-1"]
     kaₗ=6e3, [description="Rate of DNA-free apolacI IPTG binding", unit= u"s^-1"]
     kuaₗ=1,[description="Rate of apolacI IPTG disassociation", unit = u"s^-1"]
@@ -28,7 +28,7 @@ D = Differential(t)
     δₛ=log(2)/(30*60), [description = "mSpinach degredation rate", unit= u"s^-1"]
     δₘ=log(2)/(60*60), [description = "MG degredation rate", unit= u"s^-1"]
     δₚ=0,[description="Average protein degredation rate", unit= u"s^-1"]
-    σ₀= -0.065, [description="Natural B-form DNA supercoil state", unit=u"2π*rad*bp^-1"] 
+    σ₀= -0.065, [description="Natural B-form DNA supercoil state", unit=u"turn*bp^-1"] 
     σspₗ = σ₀*lₚ/lₗ, [description="Approximate Optimal supercoiling density, plac"]
     σstₛ = σ₀*lₚ/lₛ, [description="Approximate Optimal supercoiling density, plac"]
     σspₜ = σ₀*lₚ/lₜ, [description="Approximate Optimal supercoiling density, pTet"]
@@ -114,7 +114,7 @@ end
 @mtkmodel nᵢ begin
   @extend reporterDynamics()
   @parameters begin
-    h₀= 10.5, [description="basepairs per right-hand turn", unit=u"bp*rad^-1*2π^-1"]
+    h₀= 10.5, [description="basepairs per right-hand turn", unit=u"bp*turn"]
   end
   @variables begin  
     σtₛ(t) = σ₀
