@@ -56,37 +56,37 @@ end
 @mtkmodel dnaComplexDynamics begin
   @extend rates()
   @parameters begin
-    rnapᵗ=0.0, [description="Total RNAP, in myTXTL no degredataion", unit=u"nM", connect = Flow]
-    promₗᵗ=0.0, [description="Total lac promoter", connect = Flow, unit=u"nM"]
-    promₜᵗ=0.0, [description="Total Tet Promoter", connect = Flow, unit=u"nM"]
-    reprₗᵗ=0.0, [description="Total Lac Repressor, in myTXTL no degredataion", connect = Flow, unit=u"nM"]
-    reprₜᵗ=0.0, [description="Total Tet Repressor, in myTXTL no degredataion", connect = Flow, unit=u"nM"]
-    indᵢᵗ=0.0, [description="Total IPTG, not metabolized by the reaction volume", connect = Flow, unit=u"nM"]
-    indₐᵗ=0.0, [description="Total aTc, not metabolized by the reaction volume", connect = Flow, unit=u"nM"]
+    rnapᵗᵒᵗ=0.0, [description="Total RNAP, in myTXTL no degredataion", unit=u"nM", connect = Flow]
+    promₗᵗᵒᵗ=0.0, [description="Total lac promoter", connect = Flow, unit=u"nM"]
+    promₜᵗᵒᵗ=0.0, [description="Total Tet Promoter", connect = Flow, unit=u"nM"]
+    reprₗᵗᵒᵗ=0.0, [description="Total Lac Repressor, in myTXTL no degredataion", connect = Flow, unit=u"nM"]
+    reprₜᵗᵒᵗ=0.0, [description="Total Tet Repressor, in myTXTL no degredataion", connect = Flow, unit=u"nM"]
+    indᵢᵗᵒᵗ=0.0, [description="Total IPTG, not metabolized by the reaction volume", connect = Flow, unit=u"nM"]
+    indₐᵗᵒᵗ=0.0, [description="Total aTc, not metabolized by the reaction volume", connect = Flow, unit=u"nM"]
   end
   @variables begin
     ecₛ(t)=0, [description="Number of mSpinach elongation comlexes", unit=u"nM"]
     ecₘ(t)=0, [description="Number of mSpinach closed dna comlexes", unit=u"nM"]
     ccₛ(t)=0, [description="Number of MG elongation comlexes", unit=u"nM"]
     ccₘ(t)=0, [description="Number of MG closed dna comlexes", unit=u"nM"]
-    promₗ(t)=promₗᵗ, [description="conc plac" ,unit=u"nM"]
-    promₜ(t)=promₜᵗ,[description="conc pTet" ,unit=u"nM"]
+    promₗ(t)=promₗᵗᵒᵗ, [description="conc plac" ,unit=u"nM"]
+    promₜ(t)=promₜᵗᵒᵗ,[description="conc pTet" ,unit=u"nM"]
     cpromₗ(t)=0, [description="conc plac-lacI complex" ,unit=u"nM"]
     cpromₜ(t)=0, [description="conc pTet-TetR complex", unit=u"nM"]
     reprₗ(t)=0, [description="conc LacI Repressor", unit=u"nM"]
     reprₜ(t)=0, [description="conc TetR Repressor", unit=u"nM"]   
     areprₗ(t)=0, [description="conc apo LacI", unit=u"nM"]
     areprₜ(t)=0, [description="conc apo TetR", unit=u"nM"]
-    indᵢ(t)=indᵢᵗ, [description="conc IPTG", unit=u"nM"]
-    indₐ(t)=indₐᵗ, [description="conc aTc", unit=u"nM"]
-    rnap(t)=rnapᵗ, [description="conc rnap" ,unit=u"nM"]
+    indᵢ(t)=indᵢᵗᵒᵗ, [description="conc IPTG", unit=u"nM"]
+    indₐ(t)=indₐᵗᵒᵗ, [description="conc aTc", unit=u"nM"]
+    rnap(t)=rnapᵗᵒᵗ, [description="conc rnap" ,unit=u"nM"]
   end
   @equations begin
-    rnapᵗ ~ rnap+ecₛ+ecₘ+ccₛ+ccₘ
-    promₗᵗ ~ promₗᵗ+ccₛ+ecₛ+cpromₗ
-    promₜᵗ ~ promₜ+ccₘ+ecₘ+cpromₜ
-    indᵢᵗ ~ indᵢ+areprₗ+cpromₗ
-    indₐᵗ ~ indₐ+areprₜ+cpromₜ
+    rnapᵗᵒᵗ ~ rnap+ecₛ+ecₘ+ccₛ+ccₘ
+    promₗᵗᵒᵗ ~ promₗ+ccₛ+ecₛ+cpromₗ
+    promₜᵗᵒᵗ ~ promₜ+ccₘ+ecₘ+cpromₜ
+    indᵢᵗᵒᵗ ~ indᵢ+areprₗ+cpromₗ
+    indₐᵗᵒᵗ ~ indₐ+areprₜ+cpromₜ
   end
 end 
 
@@ -94,35 +94,36 @@ end
   @extend dnaComplexDynamics()
   @extend rates()
   @variables begin
-    reporterₛ(t)=0, [description="mSpinach Transcript", unit=u"μM"]
-    reporterₘ(t)=0, [description="MG Transcript", unit=u"μM"]
+    reporterₛ(t)=0, [description="mSpinach Transcript", unit=u"nM"]
+    reporterₘ(t)=0, [description="MG Transcript", unit=u"nM"]
   end
   @equations begin
     D(reporterₛ)~kinitₗ*ecₛ-δₛ*reporterₛ
     D(reporterₘ)~kinitₜ*ecₘ-δₘ*reporterₘ
     D(ecₛ)~kₒₚₑₙ*ccₛ-kinitₗ*ecₛ
     D(ecₘ)~kₒₚₑₙ*ccₘ-kinitₜ*ecₘ
-    D(ccₛ)~kelongₛ*(rnapᵗ-ecₛ-ecₘ-ccₛ-ccₘ)*(promₗᵗ-ccₛ-ecₛ-cpromₗ)-(kelongₛ-kₒₚₑₙ)*ccₛ
-    D(ccₘ)~kelongₘ*(rnapᵗ-ecₘ-ecₛ-ccₛ-ccₘ)*(promₜᵗ-ccₘ-ecₘ-cpromₜ)-(kelongₘ-kₒₚₑₙ)*ccₘ
-    D(reprₗ)~ρₗ+kuaₗ*(indᵢᵗ-indᵢ)+kuₗ*(reprₗᵗ-reprₗ-indᵢᵗ-indᵢ)-kaₗ*reprₗ*indᵢ-kbindₗ*reprₗ-σₚ*reprₗ
-    D(reprₜ)~ρₜ+kuaₜ*(indₐᵗ-indₐ)*kuₜ*(reprₜᵗ-reprₜ-indₐᵗ-indₐ)-kaₜ*reprₜ*ind-kbindₜ*reprₜ-σₚ*reprₜ
-    D(indᵢ)~kaₗ*(reprₗ+cpromₗ)*indᵢ+kuaₗ*(reprₗᵗ-reprₗ-cpromₗ)
-    D(indₐ)~kaₜ*(reprₜ+cpromₜ)*indₐ+kuaₜ*(reprₜᵗ-reprₜ-cpromₜ)
+    D(ccₛ)~kelongₛ*(rnapᵗᵒᵗ-ecₛ-ecₘ-ccₛ-ccₘ)*(promₗᵗᵒᵗ-ccₛ-ecₛ-cpromₗ)-(kelongₛ-kₒₚₑₙ)*ccₛ
+    D(ccₘ)~kelongₘ*(rnapᵗᵒᵗ-ecₘ-ecₛ-ccₛ-ccₘ)*(promₜᵗᵒᵗ-ccₘ-ecₘ-cpromₜ)-(kelongₘ-kₒₚₑₙ)*ccₘ
+    D(reprₗ)~ρₗ+kuaₗ*(indᵢᵗᵒᵗ-indᵢ)+kuₗ*(reprₗᵗᵒᵗ-reprₗ-indᵢᵗᵒᵗ-indᵢ)-kaₗ*reprₗ*indᵢ-kbindₗ*reprₗ-δₚ*reprₗ
+    D(reprₜ)~ρₜ+kuaₜ*(indₐᵗᵒᵗ-indₐ)*kuₜ*(reprₜᵗᵒᵗ-reprₜ-indₐᵗᵒᵗ-indₐ)-kaₜ*reprₜ*indₐ-kbindₜ*reprₜ-δₚ*reprₜ
+    D(indᵢ)~kaₗ*(reprₗ+cpromₗ)*indᵢ+kuaₗ*(reprₗᵗᵒᵗ-reprₗ-cpromₗ)
+    D(indₐ)~kaₜ*(reprₜ+cpromₜ)*indₐ+kuaₜ*(reprₜᵗᵒᵗ-reprₜ-cpromₜ)
   end
 end
 
 @mtkmodel nᵢ begin
   @extend reporterDynamics()
-  @extend σDynamics()
   @parameters begin
     h₀= 10.5, [description="basepairs per right-hand turn", unit=u"bp*rad^-1*2π^-1"]
   end
-  @variables begin
-    Δₖᵢₙₖ(t) = (σtₛ+σtₘ)*h₀, [description="Position of the kink serperating coils from either side", unit=u"bp"] 
+  @variables begin  
+    σtₛ(t) = σ₀
+    σtₘ(t) = σ₀
     nfₛ(t)=100, [description="length of promoter, mSpinach ORF, terminator and available intergenic space", unit=u"bp"]
     nfₘ(t)=100, [description="length of promoter, MG ORF, terminator and available intergenic space", unit=u"bp"]
   end
   @equations begin
+    Δₖᵢₙₖ = (σtₛ+σtₘ)*h₀
     nfₛ = max((lₗ+lₛ+lᵢ/2(promₜ/(promₜ+cpromₜ))+(lᵢ/2+lₘ)*cpromₜ/(promₜ+cpromₜ)-Δₖᵢₙₖ),0) 
     nfₘ = max((lₜ+lₘ+lᵢ/2(promₗ/(promₗ-cpromₗ))+(lᵢ/2+lₛ)*cpromₗ/(promₗ+cpromₗ)-Δₖᵢₙₖ),0)
   end
