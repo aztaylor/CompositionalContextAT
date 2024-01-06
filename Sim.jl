@@ -10,7 +10,7 @@ D = Differential(t)
     lₛ=240, [description="Length of mSpinach and T500 terminator", unit=u"bp"]
     lₘ=63,  [description="Length of MG and T500 terminator", unit=u"bp"]
     lₚ=2892, [description="Length of plasmid", unit=u"bp"]
-    kinitₘₐₓ = 7e-2, [description="Max initiation rate", unit=u"nM*s^-1"]
+    kinitₘₐₓ = 7e-2, [description="Max initiation rate", unit=u"s^-1"]
     kelongₘₐₓ = 7e-2, [description="Max elongation rate", unit=u"s^-1"]
     kσₘₘ = 50, [description="MM constant for supercoiling hillfunctions",unit=u"μM"]
     kₒₚₑₙ=0.04, [description = "Rate of open complex formation", unit=u"s^-1"]
@@ -29,27 +29,27 @@ D = Differential(t)
     δₘ=log(2)/(60*60), [description = "MG degredation rate", unit=u"s^-1"]
     δₚ=0,[description="Average protein degredation rate", unit=u"s^-1"]
     σ₀=-0.065, [description="Natural B-form DNA supercoil state", unit=u"turn*bp^-1"] 
-    σspₗ = σ₀*lₚ/lₗ, [description="Approximate Optimal supercoiling density, plac", unit=u"bp*turn^-1"]
-    σstₛ = σ₀*lₚ/lₛ, [description="Approximate Optimal supercoiling density, plac", unit=u"bp*turn^-1"]
-    σspₜ = σ₀*lₚ/lₜ, [description="Approximate Optimal supercoiling density, pTet", unit=u"bp*turn^-1"]
-    σstₘ = σ₀*lₚ/lₘ, [description="Approximate Optimal supercoiling density, pTet", unit=u"bp*turn^-1"]
+    σspₗ = σ₀*lₚ/lₗ, [description="Approximate Optimal supercoiling density, plac"]
+    σstₛ = σ₀*lₚ/lₛ, [description="Approximate Optimal supercoiling density, plac"]
+    σspₜ = σ₀*lₚ/lₜ, [description="Approximate Optimal supercoiling density, pTet"]
+    σstₘ = σ₀*lₚ/lₘ, [description="Approximate Optimal supercoiling density, pTet"]
 
   end
   @variables begin
-    σtₛ(t)=-6, [description="supercoil state of mSpinach ORF", unit=u"bp*turn^-1"]
-    σtₘ(t)=-3, [description="supercoil state of MG ORF",unit=u"bp*turn^-1"]
-    σpₗ(t)=-6, [description="supercoil state of mSpinach promoter", unit=u"bp*turn^-1"]
-    σpₜ(t)=-3, [description="supercoil state of MG promoter",unit=u"bp*turn^-1"]
-    kinitₗ(t) = 0.5, [description="transcription initiation rate plac", unit=u"nM*s^-1"]
-    kinitₜ(t) = 0.5, [description="transcription initiation rate pTet", unit=u"nM*s^-1"]
-    kelongₛ(t) = 0.5, [description="transcription elongation rate mSpinach", unit=u"nM*s^-1"]
-    kelongₘ(t) = 0.5, [description="transcription elongation rate MG", unit=u"nM*s^-1"]
+    σtₛ(t)=-6, [description="supercoil state of mSpinach ORF"]
+    σtₘ(t)=-3, [description="supercoil state of MG ORF"]
+    σpₗ(t)=-6, [description="supercoil state of mSpinach promoter"]
+    σpₜ(t)=-3, [description="supercoil state of MG promoter"]
+    kinitₗ(t) = 0.5, [description="transcription initiation rate plac", unit=u"s^-1"]
+    kinitₜ(t) = 0.5, [description="transcription initiation rate pTet", unit=u"s^-1"]
+    kelongₛ(t) = 0.5, [description="transcription elongation rate mSpinach", unit=u"s^-1"]
+    kelongₘ(t) = 0.5, [description="transcription elongation rate MG", unit=u"s^-1"]
   end
   @equations begin
-    kinitₗ ~ σspₗ*kinitₘₐₓ/(σspₗ+((σpₗ-σspₗ)))
-    kelongₛ ~ σstₛ*kinitₘₐₓ/(σstₛ +((σtₛ-σstₛ)))
-    kinitₜ ~ σspₜ*kinitₘₐₓ/(σspₜ+((σpₜ-σspₜ)))
-    kelongₘ ~ σstₘ*kinitₘₐₓ/(σstₘ+((σtₘ-σstₘ)))
+    kinitₗ ~ σspₗ*kinitₘₐₓ/(σspₗ+((σpₗ-σspₗ)^2))
+    kelongₛ ~ σstₛ*kinitₘₐₓ/(σstₛ +((σtₛ-σstₛ)^2))
+    kinitₜ ~ σspₜ*kinitₘₐₓ/(σspₜ+((σpₜ-σspₜ)^2))
+    kelongₘ ~ σstₘ*kinitₘₐₓ/(σstₘ+((σtₘ-σstₘ)^2))
   end
 end
 
@@ -115,11 +115,11 @@ end
   @extend reporterDynamics()
   @parameters begin
     h₀= 10.5, [description="basepairs per right-hand turn", unit=u"bp*turn^-1"]
-    σ₀=-0.065, [description="standard supercoil state", unit=u"bp*turn^-1"]
+    σ₀=-0.065, [description="standard supercoil state"]
   end
   @variables begin  
-    σtₛ(t) = σ₀, [description="supercoiling density of mSpinach ORF+Term", unit=u"bp*turn^-1"]
-    σtₘ(t) = σ₀,[description="supercoiling density of MG ORF+Term", unit=u"bp*turn^-1"]
+    σtₛ(t) = σ₀, [description="supercoiling density of mSpinach ORF+Term"]
+    σtₘ(t) = σ₀,[description="supercoiling density of MG ORF+Term"]
     nfₛ(t)=100, [description="length of promoter, mSpinach ORF, terminator and available intergenic space", unit=u"bp"]
     nfₘ(t)=100, [description="length of promoter, MG ORF, terminator and available intergenic space", unit=u"bp"]
   end
@@ -141,14 +141,14 @@ end
     kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase", unit=u"μM"]
   end 
   @variables begin
-    σpₗ₊(t) = 0, [description="Decomposition of the plac supercoiling state into strictly positive parts", unit=u"bp*turn^-1"] 
-    σpₗ₋(t) = 0, [description="Decomposition of the plac supercoiling state into strictly negative parts", unit=u"bp*turn^-1"]
-    σtₛ₊(t) = 0, [description="Decomposition of the mSpinach supercoiling state into strictly positive parts", unit=u"bp*turn^-1"]
-    σtₛ₋(t) = 0, [description="Decomposition of the mSpinach supercoiling state into strictly negative parts", unit=u"bp*turn^-1"]
-    σpₜ₊(t) = 0, [description="Decomposition of the pTet supercoiling state into strictly positive parts", unit=u"bp*turn^-1"]
-    σpₜ₋(t) = 0, [description="Decomposition of the pTet supercoiling state into strictly negative parts", unit=u"bp*turn^-1"]
-    σtₘ₊(t) = 0, [description="Decomposition of the MG supercoiling state into strictly positive parts", unit=u"bp*turn^-1"]
-    σtₘ₋(t) = 0, [description="Decomposition of the MG supercoiling state into strictly negative parts", unit=u"bp*turn^-1"]
+    σpₗ₊(t) = 0, [description="Decomposition of the plac supercoiling state into strictly positive parts"] 
+    σpₗ₋(t) = 0, [description="Decomposition of the plac supercoiling state into strictly negative parts"]
+    σtₛ₊(t) = 0, [description="Decomposition of the mSpinach supercoiling state into strictly positive parts"]
+    σtₛ₋(t) = 0, [description="Decomposition of the mSpinach supercoiling state into strictly negative parts"]
+    σpₜ₊(t) = 0, [description="Decomposition of the pTet supercoiling state into strictly positive parts"]
+    σpₜ₋(t) = 0, [description="Decomposition of the pTet supercoiling state into strictly negative parts"]
+    σtₘ₊(t) = 0, [description="Decomposition of the MG supercoiling state into strictly positive parts"]
+    σtₘ₋(t) = 0, [description="Decomposition of the MG supercoiling state into strictly negative parts"]
     mpₗ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"s^-1"]
     mtₛ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"s^-1"]
     mpₜ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"s^-1"]
