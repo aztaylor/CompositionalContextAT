@@ -1,6 +1,8 @@
 \documentclass{article}
 
 \usepackage{amsmath}
+\usepackage{chemfig}
+
 
 \title{Notes While Building Computational Context Model}
 \author{Aleczander Taylor}
@@ -15,5 +17,59 @@
   have on the results they observed. This is mainly a notebook so that I can keep track of
   the math.
 \end{abstract}
+
+\section{Introduction}
+  We sought to recreate the work of Yeung et al.\ in regard to quantification of
+  supercoiliing based compositional context effects in regard to synthetic gene networks,
+  to then modify it to include several scenarios. These include the introduction of
+  targeted DNA binding proteins, such as the Cas family, as well as the effect of backbone
+  expression cassettes such as the origin of replication, etc\dots
+
+  Mainly this will focus on my process in developing these ideas.
   
+\section{An Aside Regarding Michaelis-Menten Kinetics and Hill Functions.}
+\subsection{Victory Henri}
+  Henri is generally thought to be the first person to create a mathematical framework to 
+  explain enzymatic activity. A Russian physical chemist born in France due to an
+  illegitimate conception, of whom latter returned to Russia (specifically Saint 
+  Petersburg). He was the relative of notable control theorist Aleksander Mikhailovich Lyapanov, 
+  composer Sergei Mikhailovich Lyapanov and Slavic liquist Boris Mikhailovich Lyapanov.
+
+  He was eventually be educated in mathematics and Natural Sciences, and earned two PhDs. The first was in 
+  psychology and the second in physical Chemistry.
+
+  As a prominent subject of study at the tine, \textbf{Invertase} became the main focus 
+  of Henri's Studies. The reaction of which is included below.
+  \begin{figure}
+    \tiny \chemfig{*6((=CH-OH)- (-OH)- (-OH)- (-0H)- (-OH)-O-)}
+  \end{figure}
+  Which eventually, with the help of Adrian John Brown, leading him to formulate the equation:
+  \[
+  \dot{x} = \frac{K*\Phi*(a-x)}{1+m*(a-x)+n*x}  
+  \]
+  Where $x \equiv$ product formed, and $a \equiv$ initial substrate, and $K, \Phi, m, \text{ and } m$ 
+  were empirically derived constants. While under recognized during his time, Henri Victors 
+  work would eventually be picked up 10 years later by Leonor Michaelis and Maud Menten.
+
+  \subsection{Michaelis-Menten}
+  While note the first to formulate a mathematical framework for enzymatic activity, Leonor
+  Michaelis and Maud Menten were the first to formulate a detailed and bio-physically meaningful 
+  model for enzyme activity. The following case describes the activity of an enzyme to
+  produce one molecule count product from one molecule count substrate. This equation 
+  recommended by the \textit{International Union of Biochemistry and Molecular Biology}, 
+  IUBMB is:
+  
+\begin{equation}
+  \nu = \frac{dp}{dt} = \frac{Va}{K_m+a}
+\end{equation}
+
+Where $\nu$ us the rate of product production per time $\frac{dp}{dt}$, $V$ (also written
+as $V_{\max}$) is the maximum production rate (more accurately the limit of production as
+substrate concentration reaches saturation) and $K_m$ is the Michaelis Constant. The
+physical interpretation of the Michaelis-Constant is the concentration of substrate when 
+$\nu={0.5}V$. This seemingly simplified description of enzymatic activity would go on to 
+be widely used in descriptions biomolecular reactions.
+
+The assumptions of the Michaealis-Menten model are as follows:
+
 \end{document}
