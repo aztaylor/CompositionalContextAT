@@ -3,7 +3,7 @@ using Catalyst, ModelingToolkit, Plots, Latexify
 # dogging some Modeling Tool Kit. Saves some lines for sure.
 # I have no idea if this is right but I believe so.
 @variables t
-
+D = Differential(t)
 @parameters begin
   lₗ=40,    [description="Length of plac", unit=u"bp"]
   lₜ=44,    [description="Length of ptet", unit=u"bp"]
@@ -31,6 +31,14 @@ using Catalyst, ModelingToolkit, Plots, Latexify
   σstₛ = σ₀*lₚ/lₛ,  [description="Approximate Optimal supercoiling density, plac"]
   σspₜ = σ₀*lₚ/lₜ,  [description="Approximate Optimal supercoiling density, pTet"]
   σstₘ = σ₀*lₚ/lₘ, [description="Approximate Optimal supercoiling density, pTet"]
+end
+@equations begin
+  D(σtₛ) ~ -(D(reporterₛ)-δₛ*reporterₛ-D(ecₛ))*(lₛ)/(2*h₀*nfₛ)...
+  -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mtₛ
+  D(σpₗ) ~ -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mpₗ
+  D(σtₘ) ~ (reporterₘ-δₛ*reporterₘ-D(ecₘ))*(lₘ)/(2*h₀*nfₘ)...
+  -(D(ecₘ)-D(ccₘ))*(lₜ/2*h₀*nfₘ)+fudge*mpₘ
+  D(σpₜ) ~ -(D(ecₘ)-D(ccₘ))*(lₘ/2*h₀*nₘ)+fudge*mpₜ
 end
 
 function kᵢₙᵢₜ(σp,σsp)
