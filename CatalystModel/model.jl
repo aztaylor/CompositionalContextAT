@@ -32,14 +32,14 @@ D = Differential(t)
   σspₜ = σ₀*lₚ/lₜ,      [description="Approximate Optimal supercoiling density, pTet"]
   σstₘ = σ₀*lₚ/lₘ,     [description="Approximate Optimal supercoiling density, pTet"]
 end
-@equations begin
-  D(σtₛ) ~ -(D(reporterₛ)-δₛ*reporterₛ-D(ecₛ))*(lₛ)/(2*h₀*nfₛ)...
-           -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mtₛ
-  D(σpₗ) ~ -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mpₗ
-  D(σtₘ) ~ (reporterₘ-δₛ*reporterₘ-D(ecₘ))*(lₘ)/(2*h₀*nfₘ)...
-        -(D(ecₘ)-D(ccₘ))*(lₜ/2*h₀*nfₘ)+fudge*mpₘ
-  D(σpₜ) ~ -(D(ecₘ)-D(ccₘ))*(lₘ/2*h₀*nₘ)+fudge*mpₜ
-end
+#@equations begin
+  #D(σtₛ) ~ -(D(reporterₛ)-δₛ*reporterₛ-D(ecₛ))*(lₛ)/(2*h₀*nfₛ)...
+           #-(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mtₛ
+  #D(σpₗ) ~ -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mpₗ
+  #D(σtₘ) ~ (reporterₘ-δₛ*reporterₘ-D(ecₘ))*(lₘ)/(2*h₀*nfₘ)...
+        #-(D(ecₘ)-D(ccₘ))*(lₜ/2*h₀*nfₘ)+fudge*mpₘ
+  #D(σpₜ) ~ -(D(ecₘ)-D(ccₘ))*(lₘ/2*h₀*nₘ)+fudge*mpₜ
+#end
 
 function kᵢₙᵢₜ(σp,σsp)
   kᵢₙᵢₜₘₐₓ = 7e-2
@@ -53,8 +53,7 @@ end
 
 rxn = @reaction_network begin
   @variables begin
-    σ(t)
-    σ(t)
+    σ(t)=t
     kᵢₙᵢₜ(σ(t), σpt)
     kₑ(σ(t), σst)
   end
@@ -64,9 +63,9 @@ rxn = @reaction_network begin
   kᵤₐₗ, aLacI --> LacI+IPTG
   kₛₗ, pₗ + LacI --> pₗC
   kᵤₗ, pₗC --> LacI +pₗ
-  kᵢₙᵢₜ(σₚₛ, σpsₗ), R + pₗ --> CCₛ
+  kᵢₙᵢₜ(σ, σpsₗ), R + pₗ --> CCₛ
   kₒₚₑₙ, CCₛ --> ECₛ
-  kₑ(σₜₛ, σts), ECₛ --> Cₛ+R+pₗ
+  kₑ(σ, σtsₛ), ECₛ --> Cₛ+R+pₗ
   δₛ, cₛ --> 0
   ρₜ, 0 --> TetR
   δₚ, TetR --> 0
@@ -74,9 +73,9 @@ rxn = @reaction_network begin
   kᵤₐₜ, aTetR --> aTc + TetR
   kₛₜ, pₜ + TetR --> pₜC 
   kₐₜ, pₜC + aTc --> pₜ+aTetR
-  kᵢₙᵢₜ(σₚₘ), R + pₜ --> CCₘ
+  kᵢₙᵢₜ(σ,σpmₜ), R + pₜ --> CCₘ
   kᵣ, CCₘ --> pₜ + R 
   kₒₚₑₙ, CCₘ --> ECₘ
-  kₑ(σₜₘ), ECₘ --> Cₘ + R +pₜ
+  kₑ(σ, σtmₘ), ECₘ --> Cₘ + R +pₜ
   δₘ, Cₘ --> 0
 end
