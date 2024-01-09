@@ -1,0 +1,25 @@
+%-----------------------------------------------------------------------------------------
+% This is meant to be a practice and practicle expercise in using latex to form chemically
+% relevent figures. The paackage Chemfig will be used to form a basis which will then be 
+% touched up in either photoshop or illlustrator. The subject is an dipeptide of RNA which
+% showcases paradines and parimadines.
+% Author: Alec Taylor 
+% Date: Too fucking Late
+%-----------------------------------------------------------------------------------------
+\documentclass{a0poster}
+\usepackage{chemfig}
+\begin{document}
+
+\begin{figure}
+  \definesubmol\phosphate{P(-[0]O)(-[-2]O)(=[-4]O)}
+  \definesubmol\ribose{-O-[2,0.5,2]?<[7,0.7]-[,,,,,line width=5pt](-[-2]!\phosphate)-
+  -([-2,0.7]OH)>[1,0.7]O-[3,0.7]?}
+  \chemfig[cram width=5pt]{-O-[-1]-[-2]!\ribose}
+\end{figure}
+
+%\begin{figure}
+%  \chemfig[cram width=5pt]{(-O-[-1]-*5(?<[line width =5pt]->-O?))-[0]-    O=[-2]P(-[-4]O)(-[0]O)(-[-2]O)-[0]O-[-1]-
+%    (*5(?<-[,,,,line width=5pt]>(-*5(-N-*6(-N= (- (NH_2))-(NH)-(=0)-) =-N=--[,,,3]))-O-[1]?))
+%    }
+%\end{figure}
+\end{document}

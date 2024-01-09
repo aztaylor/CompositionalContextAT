@@ -10,21 +10,21 @@ D = Differential(t)
     lₛ=240, [description="Length of mSpinach and T500 terminator", unit=u"bp"]
     lₘ=63,  [description="Length of MG and T500 terminator", unit=u"bp"]
     lₚ=2892, [description="Length of plasmid", unit=u"bp"]
-    kinitₘₐₓ = 7e-2, [description="Max initiation rate", unit=u"s^-1"]
+    kinitₘₐₓ = 7e-2, [description="Max initiation rate", unit=u"nM^-1*s^-1"]
     kelongₘₐₓ = 7e-2, [description="Max elongation rate", unit=u"s^-1"]
-    kσₘₘ = 50, [description="MM constant for supercoiling hillfunctions",unit=u"μM"]
+    kσₘₘ = 50e-3, [description="MM constant for supercoiling hillfunctions",unit=u"nM"]
     kₒₚₑₙ=0.04, [description = "Rate of open complex formation", unit=u"s^-1"]
     kᵣ=1/170, [description = "RFP maturation rate", unit=u"s^-1"]
-    kaₗ=6e3, [description="Rate of DNA-free apolacI IPTG binding", unit=u"s^-1"]
+    kaₗ=6e3, [description="Rate of DNA-free apolacI IPTG binding", unit=u"nM^-1*s^-1"]
     kuaₗ=1,[description="Rate of apolacI IPTG disassociation", unit =u"s^-1"]
     kbindₗ=10, [description="lacI-promoter asossiation rate", unit=u"s^-1"]
     kuₗ=0.022, [description ="lacI-promoter disassociation rate", unit=u"s^-1"]
-    kaₜ=6e3, [description = "aTc-TetR association rate", unit=u"s^-1"]
+    kaₜ=6e3, [description = "aTc-TetR association rate", unit=u"nM^-1*s^-1"]
     kuaₜ=1, [description="aTc-TetR disassociation rate", unit=u"s^-1"]
     kbindₜ=10, [description="tetR-DNA association rate", unit=u"s^-1"]
     kuₜ=0.022, [description = "tetR-DNA disassociation rate", unit=u"s^-1"]
-    ρₗ=0, [description="Rate of lacI production", unit=u"s^-1"]
-    ρₜ=0, [description="Rate of tetR production", unit=u"s^-1"]
+    ρₗ=0, [description="Rate of lacI production", unit=u"nM*s^-1"]
+    ρₜ=0, [description="Rate of tetR production", unit=u"nM*s^-1"]
     δₛ=log(2)/(30*60), [description = "mSpinach degredation rate", unit=u"s^-1"]
     δₘ=log(2)/(60*60), [description = "MG degredation rate", unit=u"s^-1"]
     δₚ=0,[description="Average protein degredation rate", unit=u"s^-1"]
@@ -39,17 +39,17 @@ D = Differential(t)
     σtₛ(t)=-6, [description="supercoil state of mSpinach ORF"]
     σtₘ(t)=-3, [description="supercoil state of MG ORF"]
     σpₗ(t)=-6, [description="supercoil state of mSpinach promoter"]
-    σpₜ(t)=-3, [description="supercoil state of MG promoter"]
-    kinitₗ(t) = 0.5, [description="transcription initiation rate plac", unit=u"s^-1"]
-    kinitₜ(t) = 0.5, [description="transcription initiation rate pTet", unit=u"s^-1"]
+    σpₜ(t)=-3 , [description="supercoil state of MG promoter"]
+    kinitₗ(t) = 0.5, [description="transcription initiation rate plac", unit=u"nM^-1*s^-1"]
+    kinitₜ(t) = 0.5, [description="transcription initiation rate pTet", unit=u"nM^-1*s^-1"]
     kelongₛ(t) = 0.5, [description="transcription elongation rate mSpinach", unit=u"s^-1"]
     kelongₘ(t) = 0.5, [description="transcription elongation rate MG", unit=u"s^-1"]
   end
   @equations begin
     kinitₗ ~ σspₗ*kinitₘₐₓ/(σspₗ+((σpₗ-σspₗ)^2))
-    kelongₛ ~ σstₛ*kinitₘₐₓ/(σstₛ +((σtₛ-σstₛ)^2))
+    kelongₛ ~ σstₛ*kelongₘₐₓ/(σstₛ +((σtₛ-σstₛ)^2))
     kinitₜ ~ σspₜ*kinitₘₐₓ/(σspₜ+((σpₜ-σspₜ)^2))
-    kelongₘ ~ σstₘ*kinitₘₐₓ/(σstₘ+((σtₘ-σstₘ)^2))
+    kelongₘ ~ σstₘ*kelongₘₐₓ/(σstₘ+((σtₘ-σstₘ)^2))
   end
 end
 
@@ -91,31 +91,29 @@ end
 end 
 
 @mtkmodel reporterDynamics begin
-  @extend dnaComplexDynamics()
-  @extend rates()
   @variables begin
     reporterₛ(t)=0, [description="mSpinach Transcript", unit=u"nM"]
     reporterₘ(t)=0, [description="MG Transcript", unit=u"nM"]
   end
   @equations begin
-    D(reporterₛ)~kinitₗ*ecₛ-δₛ*reporterₛ
-    D(reporterₘ)~kinitₜ*ecₘ-δₘ*reporterₘ
-    D(ecₛ)~kₒₚₑₙ*ccₛ-kinitₗ*ecₛ
-    D(ecₘ)~kₒₚₑₙ*ccₘ-kinitₜ*ecₘ
-    D(ccₛ)~kelongₛ*(rnapᵗᵒᵗ-ecₛ-ecₘ-ccₛ-ccₘ)*(promₗᵗᵒᵗ-ccₛ-ecₛ-promₗc)-(kelongₛ-kₒₚₑₙ)*ccₛ
-    D(ccₘ)~kelongₘ*(rnapᵗᵒᵗ-ecₘ-ecₛ-ccₛ-ccₘ)*(promₜᵗᵒᵗ-ccₘ-ecₘ-promₜc)-(kelongₘ-kₒₚₑₙ)*ccₘ
+    D(reporterₛ)~kelongₛ*ecₛ-δₛ*reporterₛ
+    D(reporterₘ)~kelongₘ*ecₘ-δₘ*reporterₘ
+    D(ecₛ)~kₒₚₑₙ*ccₛ-kelongₛ*ecₛ
+    D(ecₘ)~kₒₚₑₙ*ccₘ-kelongₘ*ecₘ
+    D(ccₛ)~kinitₗ*(rnapᵗᵒᵗ-ecₛ-ecₘ-ccₛ-ccₘ)*(promₗᵗᵒᵗ-ccₛ-ecₛ-promₗc)-(kelongₛ-kₒₚₑₙ)*ccₛ
+    D(ccₘ)~kinitₜ*(rnapᵗᵒᵗ-ecₘ-ecₛ-ccₛ-ccₘ)*(promₜᵗᵒᵗ-ccₘ-ecₘ-promₜc)-(kelongₘ-kₒₚₑₙ)*ccₘ
     D(reprₗ)~ρₗ+kuaₗ*(indᵢᵗᵒᵗ-indᵢ)+kuₗ*(reprₗᵗᵒᵗ-reprₗ-indᵢᵗᵒᵗ-indᵢ)-kaₗ*reprₗ*indᵢ-kbindₗ*reprₗ-δₚ*reprₗ
-    D(reprₜ)~ρₜ+kuaₜ*(indₐᵗᵒᵗ-indₐ)*kuₜ*(reprₜᵗᵒᵗ-reprₜ-indₐᵗᵒᵗ-indₐ)-kaₜ*reprₜ*indₐ-kbindₜ*reprₜ-δₚ*reprₜ
+    D(reprₜ)~ρₜ+kuaₜ*(indₐᵗᵒᵗ-indₐ)+kuₜ*(reprₜᵗᵒᵗ-reprₜ-indₐᵗᵒᵗ-indₐ)-kaₜ*reprₜ*indₐ-kbindₜ*reprₜ-δₚ*reprₜ
     D(indᵢ)~kaₗ*(reprₗ+promₗc)*indᵢ+kuaₗ*(reprₗᵗᵒᵗ-reprₗ-promₗc)
     D(indₐ)~kaₜ*(reprₜ+promₜc)*indₐ+kuaₜ*(reprₜᵗᵒᵗ-reprₜ-promₜc)
   end
 end
 
 @mtkmodel nᵢ begin
-  @extend reporterDynamics()
   @parameters begin
     h₀= 10.5, [description="basepairs per right-hand turn", unit=u"bp*turn^-1"]
     σ₀=-0.065, [description="standard supercoil state"]
+    lᵢ = 150, [description="Intergenic Spacer Length", unit="bp"]
   end
   @variables begin  
     σtₛ(t) = σ₀, [description="supercoiling density of mSpinach ORF+Term"]
@@ -125,20 +123,19 @@ end
   end
   @equations begin
     Δₖᵢₙₖ = (σtₛ+σtₘ)*h₀
-    nfₛ = max((lₗ+lₛ+lᵢ/2(promₜ/(promₜ+promₜc))+(lᵢ/2+lₘ)*promₜc/(promₜ+promₜc)-Δₖᵢₙₖ),0) 
-    nfₘ = max((lₜ+lₘ+lᵢ/2(promₗ/(promₗ-promₗc))+(lᵢ/2+lₛ)*promₗc/(promₗ+promₗc)-Δₖᵢₙₖ),0)
+    nfₛ = (lₗ+lₛ+lᵢ/2(promₜ/(promₜ+promₜc))+(lᵢ/2+lₘ)*promₜc/(promₜ+promₜc)-Δₖᵢₙₖ) 
+    nfₘ =(lₜ+lₘ+lᵢ/2(promₗ/(promₗ-promₗc))+(lᵢ/2+lₛ)*promₗc/(promₗ+promₗc)-Δₖᵢₙₖ)
   end
 end
 
 @mtkmodel σMaintenanceDynamics begin
-  @extend reporterDynamics()
-  @extend nᵢ()
   @parameters begin
     gyr₀=18.93, [description="Concentration Gyrase", unit=u"μM"]
     topo₀=2, [description="Conc Topoisomerase", unit=u"μM"]
     τ=0.5, [description="Rate of topoisomerase activity", unit=u"turn*s^-1"]
     γ=0.5, [description="Rate of Gyrase activit", unit=u"turn*s^-1"]
     kgyrₘₘ=200, [description="Michaelis-Menten constant for gyrase", unit=u"μM"]
+    fudge = 1, [description="Fudge Factor", unit=u"nM"]
   end 
   @variables begin
     σpₗ₊(t) = 0, [description="Decomposition of the plac supercoiling state into strictly positive parts"] 
@@ -149,10 +146,10 @@ end
     σpₜ₋(t) = 0, [description="Decomposition of the pTet supercoiling state into strictly negative parts"]
     σtₘ₊(t) = 0, [description="Decomposition of the MG supercoiling state into strictly positive parts"]
     σtₘ₋(t) = 0, [description="Decomposition of the MG supercoiling state into strictly negative parts"]
-    mpₗ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"s^-1"]
-    mtₛ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"s^-1"]
-    mpₜ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"s^-1"]
-    mtₘ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"s^-1"]
+    mpₗ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"nM*s^-1"]
+    mtₛ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"nM*s^-1"]
+    mpₜ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"nM*s^-1"]
+    mtₘ(t) = 0, [description="Maintenance Dynamics from topoisomerase and Gyrase", unit=u"nM*s^-1"]
   end  
   @equations begin
     if σpₗ > 0
@@ -163,7 +160,8 @@ end
     if σtₛ > 0
        σtₛ₊ = σtₛ₊+σtₛ
     elseif σtₛ < 0
-      σtₛ₋ = σtₛ₋+σtₛ; end
+      σtₛ₋ = σtₛ₋+σtₛ
+    end
     if σpₜ > 0
        σpₜ₊ = σpₜ₊+σpₜ
     elseif σpₜ < 0
@@ -184,13 +182,17 @@ end
 
 @mtkmodel σDynamics begin
   @extend σMaintenanceDynamics()
+
+  @variables begin
+    fudge(t) = 1, [description="Fudge Factor", unit=u"nM"]
+  end
   @equations begin
-    D(σtₛ) ~ -(reporterₛ-δₛ*reporterₛ-D(ecₛ))*(lₛ)/(2*h₀*nfₛ)...
-            -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+mpₛ
-    D(σpₗ) ~ -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+mpᵢ
-    D(σpₜ) ~ (reporterₘ-δₛ*reporterₘ-D(ecₘ))*(lₘ)/(2*h₀*nfₘ)...
-            -(D(ecₘ)-D(ccₘ))*(lₗ/2*h₀*nfₘ)+mpₘ
-    D(σtₘ) ~ -(D(ecₘ)-D(ccₘ))*(lₗ/2*h₀*nₘ)+mpₜ
+    D(σtₛ) ~ -(D(reporterₛ)-δₛ*reporterₛ-D(ecₛ))*(lₛ)/(2*h₀*nfₛ)...
+            -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mtₛ
+    D(σpₗ) ~ -(D(ecₛ)-D(ccₛ))*(lₗ/2*h₀*nfₛ)+fudge*mpₗ
+    D(σtₘ) ~ (reporterₘ-δₛ*reporterₘ-D(ecₘ))*(lₘ)/(2*h₀*nfₘ)...
+            -(D(ecₘ)-D(ccₘ))*(lₜ/2*h₀*nfₘ)+fudge*mpₘ
+    D(σpₜ) ~ -(D(ecₘ)-D(ccₘ))*(lₘ/2*h₀*nₘ)+fudge*mpₜ
   end
 end
 
