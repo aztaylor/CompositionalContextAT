@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1704617240 "/Users/alec/Documents/GradSchool/Yeung_Lab/compcontext/CompositionalContextAT/RNA_Model/main.tex" "main.pdf" "main" 1704617241 2
-  "/Users/alec/Documents/GradSchool/Yeung_Lab/compcontext/CompositionalContextAT/RNA_Model/main.tex" 1704617239 1119 d3a593f20c2efa1b1f2b6a1b635f4edb ""
+["pdflatex"] 1704780565 "/Users/alec/Documents/GradSchool/Yeung_Lab/compcontext/CompositionalContextAT/RNA_Model/main.tex" "main.pdf" "main" 1704780566 2
+  "/Users/alec/Documents/GradSchool/Yeung_Lab/compcontext/CompositionalContextAT/RNA_Model/main.tex" 1704780564 1119 d3a593f20c2efa1b1f2b6a1b635f4edb ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmex10.tfm" 1136768653 992 662f679a0b3d2d53c1b94050fdaa3f50 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1136768653 1524 4414a8315f39513458b80dfc63bff03a ""
@@ -95,8 +95,8 @@
   "/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1697075873 4623355 b8cad38412faebe1ce5b780a45db67bd ""
   "/usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1697075763 7883462 26cc2fc4714ac7c6c90c208150a7697d ""
   "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
-  "main.aux" 1704617241 75 382dc2d1bb42e691bc29fef895260242 "pdflatex"
-  "main.tex" 1704617239 1119 d3a593f20c2efa1b1f2b6a1b635f4edb ""
+  "main.aux" 1704780566 75 382dc2d1bb42e691bc29fef895260242 "pdflatex"
+  "main.tex" 1704780564 1119 d3a593f20c2efa1b1f2b6a1b635f4edb ""
   (generated)
   "a0header.ps"
   "main.aux"
