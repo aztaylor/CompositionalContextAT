@@ -2,7 +2,7 @@ using Catalyst, ModelingToolkit, Plots, Latexify
 # Have decided that catalyst seems like the best approach over raw
 # dogging some Modeling Tool Kit. Saves some lines for sure.
 # I have no idea if this is right but I believe so.
-
+@variables t
 @parameters begin
   lₗ=40, [description="Length of plac", unit=u"bp"]
   lₜ=44, [description="Length of ptet", unit=u"bp"]
@@ -32,17 +32,23 @@ using Catalyst, ModelingToolkit, Plots, Latexify
   σstₘ = σ₀*lₚ/lₘ, [description="Approximate Optimal supercoiling density, pTet"]
 end
 
-function kᵢₙᵢₜ(σp,σsp) begin
-  kᵢₙᵢₜₘₐₓ = 7e-2, [description="Max initiation rate", unit=u"nM^-1*s^-1"]
+function kᵢₙᵢₜ(σp,σsp)
+  kᵢₙᵢₜₘₐₓ = 7e-2
   kᵢₙᵢₜ = σsp*kᵢₙᵢₜₘₐₓ/(σsp+((σp-σsp)^2))
 end
 
-function kₑ(σt, σst) begin
-  kₑₘₐₓ = 7e-2, [description="Max elongation rate", unit=u"s^-1"]
+function kₑ(σt, σst)
+  kₑₘₐₓ = 7e-2
   kₑ = σst*kₑₘₐₓ/(σst +((σt-σst)^2))
 end
 
 rxn = @reaction_network begin
+  @variables begin
+    σ(t)
+    σ(t)
+    kᵢₙᵢₜ(σ(t), σpt)
+    kₑ(σ(t), σst)
+  end
   ρₗ, 0-->LacI
   δₚ, LacI --> 0
   kₐₗ, + LacI +IPTG --> aLacI
