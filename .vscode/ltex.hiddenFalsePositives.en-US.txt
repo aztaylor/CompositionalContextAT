@@ -1,3 +1,0 @@
-{"rule":"ARTICLE_ADJECTIVE_OF","sentence":"^\\QHe was the related of notable control theorist Aleksander Mikhailovich Lyapanov, composer Sergei Mikhailovich Lyapanov and Slavic liquist Boris Mikhailovich Lyapanov.\\E$"}
-{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QHe was the relative of notable control theorist Aleksander Mikhailovich Lyapanov, composer Sergei Mikhailovich Lyapanov and Slavic liquist Boris Mikhailovich Lyapanov.\\E$"}
-{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe physical interpretation of the Michaelis-Constant is the concentration of substrate when \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}

@@ -41,6 +41,7 @@ using Catalyst, ModelingToolkit, Plots, Latexify# , Main.UnitfulBio], # ful], # 
   kσₘₘ=200 #, [description="Michaelis-Menten constant for gyrase"] # =u"μM"]
 end
 @variables begin
+  t 
   σtₛ(t)=σ₀#, [description="Supercoiling State of mSpinach"], # =2*π*u"rad"], 
   σtₘ(t)=σ₀ #, [description="Supercoiling State of MG"], # =2*π*u"rad"],
   σpₗ(t)=σ₀#, [description="Supercoiling density of plac"], # =2*π*u"rad"],
@@ -55,13 +56,13 @@ end
   CCₛ(t)=0 #, [description="conc Closed Complex for mSpinach"], # =u"nM"],
   ECₘ(t)=0 #, [description="conc Open Complex for MG"], # =u"nM"],
   CCₘ(t)=0 #, [description="conc Closed Complex for MG"], # =u"nM"],
-  LacI(t)=0
-  aLacI(t)=0
-  TetR(t)=0
-  aTetR(t)=0
-  IPTG(t)=1
-  aTc(t) = 1
-  R(t) = 100
+  LacI(t)=0 #, [description="conc Lac Repressor", unit=u"nM"],
+  aLacI(t)=0 #, [description="Concentration of apoLacI", unit=u"nM"],
+  TetR(t)=0 #, [description="Concentration of Tet Repressor", unit=u"nM"],
+  aTetR(t)=0 #, [description="Concentration of apoTetR", unit =u"nM"],
+  IPTG(t)=1 #, [description="Concentration of IPTG inducer, unit=u"nM"],
+  aTc(t) = 1 #, [description="Concentration of aTc Inducer", unit="nM"],
+  R(t) = 100 #, [description="Cocentration of RNA Polymerase", unit=u"nM"],
   σ₊(t)=0 #, [description="Strictly positive compoenent of superoil"], # =2*π*u"rad"], 
   σ₋(t)=0 #, [description="Strictly negative compoenent of superoil"], # unit=2*π*u"rad"], 
   Δₖᵢₙₖ(t)=0 #, [description="kink formed from super coils."], # =u"bp"],
@@ -86,6 +87,7 @@ function kₑ(σt, σst)
   kₑ = σst*kₑₘₐₓ/(σst +((σt-σst)^2))
 end
 
+D = Differential(t)
 eqns = [Δₖᵢₙₖ ~ (σtₛ+σtₘ)*h₀,
         nfₛ ~ (lₗ+lₛ+lᵢ/2(pₜ/(pₜ+pₜc))+((lᵢ/2)+lₘ)*pₜc/(pₜ+pₜc)-Δₖᵢₙₖ), 
         nfₘ ~ (lₜ+lₘ+lᵢ/2(pₗ/(pₗ-pₗc))+((lᵢ/2)+lₛ)*pₗc/(pₗ+pₗc)-Δₖᵢₙₖ),
@@ -94,7 +96,7 @@ eqns = [Δₖᵢₙₖ ~ (σtₛ+σtₘ)*h₀,
         D(σtₘ) ~ -(D(Cₘ)-δₛ*Cₘ-D(ECₘ))*(lₘ)/(2*h₀*nfₘ)-(D(ECₘ)-D(CCₘ))*(lₜ/2*h₀*nfₘ)+m(σtₘ),
         D(σpₜ) ~ -(D(ECₘ)-D(CCₘ))*(lₘ/2*h₀*nfₘ)+m(σpₜ)]
 
-@named odesys = ODESystem(eqns,t)
+@named odesys = ODESystem(eqns, t)
 
 rxn = @reaction_network begin
   #@variables σpₗ(t) σpₜ(t) σₛ(t) σₘ(t)
